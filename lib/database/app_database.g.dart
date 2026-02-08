@@ -1059,12 +1059,742 @@ class PresupuestosCompanion extends UpdateCompanion<Presupuesto> {
   }
 }
 
+class $EmpleadosTable extends Empleados
+    with TableInfo<$EmpleadosTable, Empleado> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $EmpleadosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nombreMeta = const VerificationMeta('nombre');
+  @override
+  late final GeneratedColumn<String> nombre = GeneratedColumn<String>(
+    'nombre',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tipoEmpleadoMeta = const VerificationMeta(
+    'tipoEmpleado',
+  );
+  @override
+  late final GeneratedColumn<String> tipoEmpleado = GeneratedColumn<String>(
+    'tipo_empleado',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, nombre, tipoEmpleado];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'empleados';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Empleado> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('nombre')) {
+      context.handle(
+        _nombreMeta,
+        nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nombreMeta);
+    }
+    if (data.containsKey('tipo_empleado')) {
+      context.handle(
+        _tipoEmpleadoMeta,
+        tipoEmpleado.isAcceptableOrUnknown(
+          data['tipo_empleado']!,
+          _tipoEmpleadoMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_tipoEmpleadoMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Empleado map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Empleado(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      nombre: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nombre'],
+      )!,
+      tipoEmpleado: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tipo_empleado'],
+      )!,
+    );
+  }
+
+  @override
+  $EmpleadosTable createAlias(String alias) {
+    return $EmpleadosTable(attachedDatabase, alias);
+  }
+}
+
+class Empleado extends DataClass implements Insertable<Empleado> {
+  final int id;
+  final String nombre;
+  final String tipoEmpleado;
+  const Empleado({
+    required this.id,
+    required this.nombre,
+    required this.tipoEmpleado,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['nombre'] = Variable<String>(nombre);
+    map['tipo_empleado'] = Variable<String>(tipoEmpleado);
+    return map;
+  }
+
+  EmpleadosCompanion toCompanion(bool nullToAbsent) {
+    return EmpleadosCompanion(
+      id: Value(id),
+      nombre: Value(nombre),
+      tipoEmpleado: Value(tipoEmpleado),
+    );
+  }
+
+  factory Empleado.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Empleado(
+      id: serializer.fromJson<int>(json['id']),
+      nombre: serializer.fromJson<String>(json['nombre']),
+      tipoEmpleado: serializer.fromJson<String>(json['tipoEmpleado']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'nombre': serializer.toJson<String>(nombre),
+      'tipoEmpleado': serializer.toJson<String>(tipoEmpleado),
+    };
+  }
+
+  Empleado copyWith({int? id, String? nombre, String? tipoEmpleado}) =>
+      Empleado(
+        id: id ?? this.id,
+        nombre: nombre ?? this.nombre,
+        tipoEmpleado: tipoEmpleado ?? this.tipoEmpleado,
+      );
+  Empleado copyWithCompanion(EmpleadosCompanion data) {
+    return Empleado(
+      id: data.id.present ? data.id.value : this.id,
+      nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      tipoEmpleado: data.tipoEmpleado.present
+          ? data.tipoEmpleado.value
+          : this.tipoEmpleado,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Empleado(')
+          ..write('id: $id, ')
+          ..write('nombre: $nombre, ')
+          ..write('tipoEmpleado: $tipoEmpleado')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, nombre, tipoEmpleado);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Empleado &&
+          other.id == this.id &&
+          other.nombre == this.nombre &&
+          other.tipoEmpleado == this.tipoEmpleado);
+}
+
+class EmpleadosCompanion extends UpdateCompanion<Empleado> {
+  final Value<int> id;
+  final Value<String> nombre;
+  final Value<String> tipoEmpleado;
+  const EmpleadosCompanion({
+    this.id = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.tipoEmpleado = const Value.absent(),
+  });
+  EmpleadosCompanion.insert({
+    this.id = const Value.absent(),
+    required String nombre,
+    required String tipoEmpleado,
+  }) : nombre = Value(nombre),
+       tipoEmpleado = Value(tipoEmpleado);
+  static Insertable<Empleado> custom({
+    Expression<int>? id,
+    Expression<String>? nombre,
+    Expression<String>? tipoEmpleado,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (nombre != null) 'nombre': nombre,
+      if (tipoEmpleado != null) 'tipo_empleado': tipoEmpleado,
+    });
+  }
+
+  EmpleadosCompanion copyWith({
+    Value<int>? id,
+    Value<String>? nombre,
+    Value<String>? tipoEmpleado,
+  }) {
+    return EmpleadosCompanion(
+      id: id ?? this.id,
+      nombre: nombre ?? this.nombre,
+      tipoEmpleado: tipoEmpleado ?? this.tipoEmpleado,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (nombre.present) {
+      map['nombre'] = Variable<String>(nombre.value);
+    }
+    if (tipoEmpleado.present) {
+      map['tipo_empleado'] = Variable<String>(tipoEmpleado.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EmpleadosCompanion(')
+          ..write('id: $id, ')
+          ..write('nombre: $nombre, ')
+          ..write('tipoEmpleado: $tipoEmpleado')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TrabajosTable extends Trabajos with TableInfo<$TrabajosTable, Trabajo> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TrabajosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _empleadoIdMeta = const VerificationMeta(
+    'empleadoId',
+  );
+  @override
+  late final GeneratedColumn<int> empleadoId = GeneratedColumn<int>(
+    'empleado_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES empleados (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _presupuestoIdMeta = const VerificationMeta(
+    'presupuestoId',
+  );
+  @override
+  late final GeneratedColumn<int> presupuestoId = GeneratedColumn<int>(
+    'presupuesto_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES presupuestos (id)',
+    ),
+  );
+  static const VerificationMeta _cantidadMeta = const VerificationMeta(
+    'cantidad',
+  );
+  @override
+  late final GeneratedColumn<int> cantidad = GeneratedColumn<int>(
+    'cantidad',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
+  @override
+  late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
+    'fecha',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _precioUnitarioMeta = const VerificationMeta(
+    'precioUnitario',
+  );
+  @override
+  late final GeneratedColumn<double> precioUnitario = GeneratedColumn<double>(
+    'precio_unitario',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _precioTotalMeta = const VerificationMeta(
+    'precioTotal',
+  );
+  @override
+  late final GeneratedColumn<double> precioTotal = GeneratedColumn<double>(
+    'precio_total',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    empleadoId,
+    presupuestoId,
+    cantidad,
+    fecha,
+    precioUnitario,
+    precioTotal,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'trabajos';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Trabajo> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('empleado_id')) {
+      context.handle(
+        _empleadoIdMeta,
+        empleadoId.isAcceptableOrUnknown(data['empleado_id']!, _empleadoIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_empleadoIdMeta);
+    }
+    if (data.containsKey('presupuesto_id')) {
+      context.handle(
+        _presupuestoIdMeta,
+        presupuestoId.isAcceptableOrUnknown(
+          data['presupuesto_id']!,
+          _presupuestoIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_presupuestoIdMeta);
+    }
+    if (data.containsKey('cantidad')) {
+      context.handle(
+        _cantidadMeta,
+        cantidad.isAcceptableOrUnknown(data['cantidad']!, _cantidadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cantidadMeta);
+    }
+    if (data.containsKey('fecha')) {
+      context.handle(
+        _fechaMeta,
+        fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fechaMeta);
+    }
+    if (data.containsKey('precio_unitario')) {
+      context.handle(
+        _precioUnitarioMeta,
+        precioUnitario.isAcceptableOrUnknown(
+          data['precio_unitario']!,
+          _precioUnitarioMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_precioUnitarioMeta);
+    }
+    if (data.containsKey('precio_total')) {
+      context.handle(
+        _precioTotalMeta,
+        precioTotal.isAcceptableOrUnknown(
+          data['precio_total']!,
+          _precioTotalMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_precioTotalMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Trabajo map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Trabajo(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      empleadoId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}empleado_id'],
+      )!,
+      presupuestoId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}presupuesto_id'],
+      )!,
+      cantidad: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cantidad'],
+      )!,
+      fecha: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}fecha'],
+      )!,
+      precioUnitario: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}precio_unitario'],
+      )!,
+      precioTotal: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}precio_total'],
+      )!,
+    );
+  }
+
+  @override
+  $TrabajosTable createAlias(String alias) {
+    return $TrabajosTable(attachedDatabase, alias);
+  }
+}
+
+class Trabajo extends DataClass implements Insertable<Trabajo> {
+  final int id;
+  final int empleadoId;
+  final int presupuestoId;
+  final int cantidad;
+  final DateTime fecha;
+  final double precioUnitario;
+  final double precioTotal;
+  const Trabajo({
+    required this.id,
+    required this.empleadoId,
+    required this.presupuestoId,
+    required this.cantidad,
+    required this.fecha,
+    required this.precioUnitario,
+    required this.precioTotal,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['empleado_id'] = Variable<int>(empleadoId);
+    map['presupuesto_id'] = Variable<int>(presupuestoId);
+    map['cantidad'] = Variable<int>(cantidad);
+    map['fecha'] = Variable<DateTime>(fecha);
+    map['precio_unitario'] = Variable<double>(precioUnitario);
+    map['precio_total'] = Variable<double>(precioTotal);
+    return map;
+  }
+
+  TrabajosCompanion toCompanion(bool nullToAbsent) {
+    return TrabajosCompanion(
+      id: Value(id),
+      empleadoId: Value(empleadoId),
+      presupuestoId: Value(presupuestoId),
+      cantidad: Value(cantidad),
+      fecha: Value(fecha),
+      precioUnitario: Value(precioUnitario),
+      precioTotal: Value(precioTotal),
+    );
+  }
+
+  factory Trabajo.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Trabajo(
+      id: serializer.fromJson<int>(json['id']),
+      empleadoId: serializer.fromJson<int>(json['empleadoId']),
+      presupuestoId: serializer.fromJson<int>(json['presupuestoId']),
+      cantidad: serializer.fromJson<int>(json['cantidad']),
+      fecha: serializer.fromJson<DateTime>(json['fecha']),
+      precioUnitario: serializer.fromJson<double>(json['precioUnitario']),
+      precioTotal: serializer.fromJson<double>(json['precioTotal']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'empleadoId': serializer.toJson<int>(empleadoId),
+      'presupuestoId': serializer.toJson<int>(presupuestoId),
+      'cantidad': serializer.toJson<int>(cantidad),
+      'fecha': serializer.toJson<DateTime>(fecha),
+      'precioUnitario': serializer.toJson<double>(precioUnitario),
+      'precioTotal': serializer.toJson<double>(precioTotal),
+    };
+  }
+
+  Trabajo copyWith({
+    int? id,
+    int? empleadoId,
+    int? presupuestoId,
+    int? cantidad,
+    DateTime? fecha,
+    double? precioUnitario,
+    double? precioTotal,
+  }) => Trabajo(
+    id: id ?? this.id,
+    empleadoId: empleadoId ?? this.empleadoId,
+    presupuestoId: presupuestoId ?? this.presupuestoId,
+    cantidad: cantidad ?? this.cantidad,
+    fecha: fecha ?? this.fecha,
+    precioUnitario: precioUnitario ?? this.precioUnitario,
+    precioTotal: precioTotal ?? this.precioTotal,
+  );
+  Trabajo copyWithCompanion(TrabajosCompanion data) {
+    return Trabajo(
+      id: data.id.present ? data.id.value : this.id,
+      empleadoId: data.empleadoId.present
+          ? data.empleadoId.value
+          : this.empleadoId,
+      presupuestoId: data.presupuestoId.present
+          ? data.presupuestoId.value
+          : this.presupuestoId,
+      cantidad: data.cantidad.present ? data.cantidad.value : this.cantidad,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      precioUnitario: data.precioUnitario.present
+          ? data.precioUnitario.value
+          : this.precioUnitario,
+      precioTotal: data.precioTotal.present
+          ? data.precioTotal.value
+          : this.precioTotal,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Trabajo(')
+          ..write('id: $id, ')
+          ..write('empleadoId: $empleadoId, ')
+          ..write('presupuestoId: $presupuestoId, ')
+          ..write('cantidad: $cantidad, ')
+          ..write('fecha: $fecha, ')
+          ..write('precioUnitario: $precioUnitario, ')
+          ..write('precioTotal: $precioTotal')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    empleadoId,
+    presupuestoId,
+    cantidad,
+    fecha,
+    precioUnitario,
+    precioTotal,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Trabajo &&
+          other.id == this.id &&
+          other.empleadoId == this.empleadoId &&
+          other.presupuestoId == this.presupuestoId &&
+          other.cantidad == this.cantidad &&
+          other.fecha == this.fecha &&
+          other.precioUnitario == this.precioUnitario &&
+          other.precioTotal == this.precioTotal);
+}
+
+class TrabajosCompanion extends UpdateCompanion<Trabajo> {
+  final Value<int> id;
+  final Value<int> empleadoId;
+  final Value<int> presupuestoId;
+  final Value<int> cantidad;
+  final Value<DateTime> fecha;
+  final Value<double> precioUnitario;
+  final Value<double> precioTotal;
+  const TrabajosCompanion({
+    this.id = const Value.absent(),
+    this.empleadoId = const Value.absent(),
+    this.presupuestoId = const Value.absent(),
+    this.cantidad = const Value.absent(),
+    this.fecha = const Value.absent(),
+    this.precioUnitario = const Value.absent(),
+    this.precioTotal = const Value.absent(),
+  });
+  TrabajosCompanion.insert({
+    this.id = const Value.absent(),
+    required int empleadoId,
+    required int presupuestoId,
+    required int cantidad,
+    required DateTime fecha,
+    required double precioUnitario,
+    required double precioTotal,
+  }) : empleadoId = Value(empleadoId),
+       presupuestoId = Value(presupuestoId),
+       cantidad = Value(cantidad),
+       fecha = Value(fecha),
+       precioUnitario = Value(precioUnitario),
+       precioTotal = Value(precioTotal);
+  static Insertable<Trabajo> custom({
+    Expression<int>? id,
+    Expression<int>? empleadoId,
+    Expression<int>? presupuestoId,
+    Expression<int>? cantidad,
+    Expression<DateTime>? fecha,
+    Expression<double>? precioUnitario,
+    Expression<double>? precioTotal,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (empleadoId != null) 'empleado_id': empleadoId,
+      if (presupuestoId != null) 'presupuesto_id': presupuestoId,
+      if (cantidad != null) 'cantidad': cantidad,
+      if (fecha != null) 'fecha': fecha,
+      if (precioUnitario != null) 'precio_unitario': precioUnitario,
+      if (precioTotal != null) 'precio_total': precioTotal,
+    });
+  }
+
+  TrabajosCompanion copyWith({
+    Value<int>? id,
+    Value<int>? empleadoId,
+    Value<int>? presupuestoId,
+    Value<int>? cantidad,
+    Value<DateTime>? fecha,
+    Value<double>? precioUnitario,
+    Value<double>? precioTotal,
+  }) {
+    return TrabajosCompanion(
+      id: id ?? this.id,
+      empleadoId: empleadoId ?? this.empleadoId,
+      presupuestoId: presupuestoId ?? this.presupuestoId,
+      cantidad: cantidad ?? this.cantidad,
+      fecha: fecha ?? this.fecha,
+      precioUnitario: precioUnitario ?? this.precioUnitario,
+      precioTotal: precioTotal ?? this.precioTotal,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (empleadoId.present) {
+      map['empleado_id'] = Variable<int>(empleadoId.value);
+    }
+    if (presupuestoId.present) {
+      map['presupuesto_id'] = Variable<int>(presupuestoId.value);
+    }
+    if (cantidad.present) {
+      map['cantidad'] = Variable<int>(cantidad.value);
+    }
+    if (fecha.present) {
+      map['fecha'] = Variable<DateTime>(fecha.value);
+    }
+    if (precioUnitario.present) {
+      map['precio_unitario'] = Variable<double>(precioUnitario.value);
+    }
+    if (precioTotal.present) {
+      map['precio_total'] = Variable<double>(precioTotal.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TrabajosCompanion(')
+          ..write('id: $id, ')
+          ..write('empleadoId: $empleadoId, ')
+          ..write('presupuestoId: $presupuestoId, ')
+          ..write('cantidad: $cantidad, ')
+          ..write('fecha: $fecha, ')
+          ..write('precioUnitario: $precioUnitario, ')
+          ..write('precioTotal: $precioTotal')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ProductosTable productos = $ProductosTable(this);
   late final $TiposMuebleTable tiposMueble = $TiposMuebleTable(this);
   late final $PresupuestosTable presupuestos = $PresupuestosTable(this);
+  late final $EmpleadosTable empleados = $EmpleadosTable(this);
+  late final $TrabajosTable trabajos = $TrabajosTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1073,6 +1803,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     productos,
     tiposMueble,
     presupuestos,
+    empleados,
+    trabajos,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -1082,6 +1814,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('presupuestos', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'empleados',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('trabajos', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -1569,6 +2308,28 @@ final class $$PresupuestosTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static MultiTypedResultKey<$TrabajosTable, List<Trabajo>> _trabajosRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.trabajos,
+    aliasName: $_aliasNameGenerator(
+      db.presupuestos.id,
+      db.trabajos.presupuestoId,
+    ),
+  );
+
+  $$TrabajosTableProcessedTableManager get trabajosRefs {
+    final manager = $$TrabajosTableTableManager(
+      $_db,
+      $_db.trabajos,
+    ).filter((f) => f.presupuestoId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_trabajosRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$PresupuestosTableFilterComposer
@@ -1631,6 +2392,31 @@ class $$PresupuestosTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> trabajosRefs(
+    Expression<bool> Function($$TrabajosTableFilterComposer f) f,
+  ) {
+    final $$TrabajosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.trabajos,
+      getReferencedColumn: (t) => t.presupuestoId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TrabajosTableFilterComposer(
+            $db: $db,
+            $table: $db.trabajos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 }
 
@@ -1752,6 +2538,31 @@ class $$PresupuestosTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> trabajosRefs<T extends Object>(
+    Expression<T> Function($$TrabajosTableAnnotationComposer a) f,
+  ) {
+    final $$TrabajosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.trabajos,
+      getReferencedColumn: (t) => t.presupuestoId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TrabajosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.trabajos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PresupuestosTableTableManager
@@ -1767,7 +2578,7 @@ class $$PresupuestosTableTableManager
           $$PresupuestosTableUpdateCompanionBuilder,
           (Presupuesto, $$PresupuestosTableReferences),
           Presupuesto,
-          PrefetchHooks Function({bool tipoMuebleId})
+          PrefetchHooks Function({bool tipoMuebleId, bool trabajosRefs})
         > {
   $$PresupuestosTableTableManager(_$AppDatabase db, $PresupuestosTable table)
     : super(
@@ -1824,7 +2635,722 @@ class $$PresupuestosTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({tipoMuebleId = false}) {
+          prefetchHooksCallback:
+              ({tipoMuebleId = false, trabajosRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [if (trabajosRefs) db.trabajos],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (tipoMuebleId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.tipoMuebleId,
+                                    referencedTable:
+                                        $$PresupuestosTableReferences
+                                            ._tipoMuebleIdTable(db),
+                                    referencedColumn:
+                                        $$PresupuestosTableReferences
+                                            ._tipoMuebleIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (trabajosRefs)
+                        await $_getPrefetchedData<
+                          Presupuesto,
+                          $PresupuestosTable,
+                          Trabajo
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PresupuestosTableReferences
+                              ._trabajosRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PresupuestosTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).trabajosRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.presupuestoId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$PresupuestosTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PresupuestosTable,
+      Presupuesto,
+      $$PresupuestosTableFilterComposer,
+      $$PresupuestosTableOrderingComposer,
+      $$PresupuestosTableAnnotationComposer,
+      $$PresupuestosTableCreateCompanionBuilder,
+      $$PresupuestosTableUpdateCompanionBuilder,
+      (Presupuesto, $$PresupuestosTableReferences),
+      Presupuesto,
+      PrefetchHooks Function({bool tipoMuebleId, bool trabajosRefs})
+    >;
+typedef $$EmpleadosTableCreateCompanionBuilder =
+    EmpleadosCompanion Function({
+      Value<int> id,
+      required String nombre,
+      required String tipoEmpleado,
+    });
+typedef $$EmpleadosTableUpdateCompanionBuilder =
+    EmpleadosCompanion Function({
+      Value<int> id,
+      Value<String> nombre,
+      Value<String> tipoEmpleado,
+    });
+
+final class $$EmpleadosTableReferences
+    extends BaseReferences<_$AppDatabase, $EmpleadosTable, Empleado> {
+  $$EmpleadosTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$TrabajosTable, List<Trabajo>> _trabajosRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.trabajos,
+    aliasName: $_aliasNameGenerator(db.empleados.id, db.trabajos.empleadoId),
+  );
+
+  $$TrabajosTableProcessedTableManager get trabajosRefs {
+    final manager = $$TrabajosTableTableManager(
+      $_db,
+      $_db.trabajos,
+    ).filter((f) => f.empleadoId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_trabajosRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$EmpleadosTableFilterComposer
+    extends Composer<_$AppDatabase, $EmpleadosTable> {
+  $$EmpleadosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nombre => $composableBuilder(
+    column: $table.nombre,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tipoEmpleado => $composableBuilder(
+    column: $table.tipoEmpleado,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> trabajosRefs(
+    Expression<bool> Function($$TrabajosTableFilterComposer f) f,
+  ) {
+    final $$TrabajosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.trabajos,
+      getReferencedColumn: (t) => t.empleadoId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TrabajosTableFilterComposer(
+            $db: $db,
+            $table: $db.trabajos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$EmpleadosTableOrderingComposer
+    extends Composer<_$AppDatabase, $EmpleadosTable> {
+  $$EmpleadosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nombre => $composableBuilder(
+    column: $table.nombre,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tipoEmpleado => $composableBuilder(
+    column: $table.tipoEmpleado,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$EmpleadosTableAnnotationComposer
+    extends Composer<_$AppDatabase, $EmpleadosTable> {
+  $$EmpleadosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get nombre =>
+      $composableBuilder(column: $table.nombre, builder: (column) => column);
+
+  GeneratedColumn<String> get tipoEmpleado => $composableBuilder(
+    column: $table.tipoEmpleado,
+    builder: (column) => column,
+  );
+
+  Expression<T> trabajosRefs<T extends Object>(
+    Expression<T> Function($$TrabajosTableAnnotationComposer a) f,
+  ) {
+    final $$TrabajosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.trabajos,
+      getReferencedColumn: (t) => t.empleadoId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TrabajosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.trabajos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$EmpleadosTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $EmpleadosTable,
+          Empleado,
+          $$EmpleadosTableFilterComposer,
+          $$EmpleadosTableOrderingComposer,
+          $$EmpleadosTableAnnotationComposer,
+          $$EmpleadosTableCreateCompanionBuilder,
+          $$EmpleadosTableUpdateCompanionBuilder,
+          (Empleado, $$EmpleadosTableReferences),
+          Empleado,
+          PrefetchHooks Function({bool trabajosRefs})
+        > {
+  $$EmpleadosTableTableManager(_$AppDatabase db, $EmpleadosTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$EmpleadosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$EmpleadosTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$EmpleadosTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> nombre = const Value.absent(),
+                Value<String> tipoEmpleado = const Value.absent(),
+              }) => EmpleadosCompanion(
+                id: id,
+                nombre: nombre,
+                tipoEmpleado: tipoEmpleado,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String nombre,
+                required String tipoEmpleado,
+              }) => EmpleadosCompanion.insert(
+                id: id,
+                nombre: nombre,
+                tipoEmpleado: tipoEmpleado,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$EmpleadosTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({trabajosRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (trabajosRefs) db.trabajos],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (trabajosRefs)
+                    await $_getPrefetchedData<
+                      Empleado,
+                      $EmpleadosTable,
+                      Trabajo
+                    >(
+                      currentTable: table,
+                      referencedTable: $$EmpleadosTableReferences
+                          ._trabajosRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$EmpleadosTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).trabajosRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.empleadoId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$EmpleadosTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $EmpleadosTable,
+      Empleado,
+      $$EmpleadosTableFilterComposer,
+      $$EmpleadosTableOrderingComposer,
+      $$EmpleadosTableAnnotationComposer,
+      $$EmpleadosTableCreateCompanionBuilder,
+      $$EmpleadosTableUpdateCompanionBuilder,
+      (Empleado, $$EmpleadosTableReferences),
+      Empleado,
+      PrefetchHooks Function({bool trabajosRefs})
+    >;
+typedef $$TrabajosTableCreateCompanionBuilder =
+    TrabajosCompanion Function({
+      Value<int> id,
+      required int empleadoId,
+      required int presupuestoId,
+      required int cantidad,
+      required DateTime fecha,
+      required double precioUnitario,
+      required double precioTotal,
+    });
+typedef $$TrabajosTableUpdateCompanionBuilder =
+    TrabajosCompanion Function({
+      Value<int> id,
+      Value<int> empleadoId,
+      Value<int> presupuestoId,
+      Value<int> cantidad,
+      Value<DateTime> fecha,
+      Value<double> precioUnitario,
+      Value<double> precioTotal,
+    });
+
+final class $$TrabajosTableReferences
+    extends BaseReferences<_$AppDatabase, $TrabajosTable, Trabajo> {
+  $$TrabajosTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $EmpleadosTable _empleadoIdTable(_$AppDatabase db) =>
+      db.empleados.createAlias(
+        $_aliasNameGenerator(db.trabajos.empleadoId, db.empleados.id),
+      );
+
+  $$EmpleadosTableProcessedTableManager get empleadoId {
+    final $_column = $_itemColumn<int>('empleado_id')!;
+
+    final manager = $$EmpleadosTableTableManager(
+      $_db,
+      $_db.empleados,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_empleadoIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $PresupuestosTable _presupuestoIdTable(_$AppDatabase db) =>
+      db.presupuestos.createAlias(
+        $_aliasNameGenerator(db.trabajos.presupuestoId, db.presupuestos.id),
+      );
+
+  $$PresupuestosTableProcessedTableManager get presupuestoId {
+    final $_column = $_itemColumn<int>('presupuesto_id')!;
+
+    final manager = $$PresupuestosTableTableManager(
+      $_db,
+      $_db.presupuestos,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_presupuestoIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$TrabajosTableFilterComposer
+    extends Composer<_$AppDatabase, $TrabajosTable> {
+  $$TrabajosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cantidad => $composableBuilder(
+    column: $table.cantidad,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get fecha => $composableBuilder(
+    column: $table.fecha,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get precioUnitario => $composableBuilder(
+    column: $table.precioUnitario,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get precioTotal => $composableBuilder(
+    column: $table.precioTotal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EmpleadosTableFilterComposer get empleadoId {
+    final $$EmpleadosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.empleadoId,
+      referencedTable: $db.empleados,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EmpleadosTableFilterComposer(
+            $db: $db,
+            $table: $db.empleados,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PresupuestosTableFilterComposer get presupuestoId {
+    final $$PresupuestosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.presupuestoId,
+      referencedTable: $db.presupuestos,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PresupuestosTableFilterComposer(
+            $db: $db,
+            $table: $db.presupuestos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TrabajosTableOrderingComposer
+    extends Composer<_$AppDatabase, $TrabajosTable> {
+  $$TrabajosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cantidad => $composableBuilder(
+    column: $table.cantidad,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get fecha => $composableBuilder(
+    column: $table.fecha,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get precioUnitario => $composableBuilder(
+    column: $table.precioUnitario,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get precioTotal => $composableBuilder(
+    column: $table.precioTotal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EmpleadosTableOrderingComposer get empleadoId {
+    final $$EmpleadosTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.empleadoId,
+      referencedTable: $db.empleados,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EmpleadosTableOrderingComposer(
+            $db: $db,
+            $table: $db.empleados,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PresupuestosTableOrderingComposer get presupuestoId {
+    final $$PresupuestosTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.presupuestoId,
+      referencedTable: $db.presupuestos,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PresupuestosTableOrderingComposer(
+            $db: $db,
+            $table: $db.presupuestos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TrabajosTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TrabajosTable> {
+  $$TrabajosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get cantidad =>
+      $composableBuilder(column: $table.cantidad, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get fecha =>
+      $composableBuilder(column: $table.fecha, builder: (column) => column);
+
+  GeneratedColumn<double> get precioUnitario => $composableBuilder(
+    column: $table.precioUnitario,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get precioTotal => $composableBuilder(
+    column: $table.precioTotal,
+    builder: (column) => column,
+  );
+
+  $$EmpleadosTableAnnotationComposer get empleadoId {
+    final $$EmpleadosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.empleadoId,
+      referencedTable: $db.empleados,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EmpleadosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.empleados,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PresupuestosTableAnnotationComposer get presupuestoId {
+    final $$PresupuestosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.presupuestoId,
+      referencedTable: $db.presupuestos,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PresupuestosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.presupuestos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TrabajosTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TrabajosTable,
+          Trabajo,
+          $$TrabajosTableFilterComposer,
+          $$TrabajosTableOrderingComposer,
+          $$TrabajosTableAnnotationComposer,
+          $$TrabajosTableCreateCompanionBuilder,
+          $$TrabajosTableUpdateCompanionBuilder,
+          (Trabajo, $$TrabajosTableReferences),
+          Trabajo,
+          PrefetchHooks Function({bool empleadoId, bool presupuestoId})
+        > {
+  $$TrabajosTableTableManager(_$AppDatabase db, $TrabajosTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TrabajosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TrabajosTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TrabajosTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> empleadoId = const Value.absent(),
+                Value<int> presupuestoId = const Value.absent(),
+                Value<int> cantidad = const Value.absent(),
+                Value<DateTime> fecha = const Value.absent(),
+                Value<double> precioUnitario = const Value.absent(),
+                Value<double> precioTotal = const Value.absent(),
+              }) => TrabajosCompanion(
+                id: id,
+                empleadoId: empleadoId,
+                presupuestoId: presupuestoId,
+                cantidad: cantidad,
+                fecha: fecha,
+                precioUnitario: precioUnitario,
+                precioTotal: precioTotal,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int empleadoId,
+                required int presupuestoId,
+                required int cantidad,
+                required DateTime fecha,
+                required double precioUnitario,
+                required double precioTotal,
+              }) => TrabajosCompanion.insert(
+                id: id,
+                empleadoId: empleadoId,
+                presupuestoId: presupuestoId,
+                cantidad: cantidad,
+                fecha: fecha,
+                precioUnitario: precioUnitario,
+                precioTotal: precioTotal,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$TrabajosTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({empleadoId = false, presupuestoId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -1844,15 +3370,28 @@ class $$PresupuestosTableTableManager
                       dynamic
                     >
                   >(state) {
-                    if (tipoMuebleId) {
+                    if (empleadoId) {
                       state =
                           state.withJoin(
                                 currentTable: table,
-                                currentColumn: table.tipoMuebleId,
-                                referencedTable: $$PresupuestosTableReferences
-                                    ._tipoMuebleIdTable(db),
-                                referencedColumn: $$PresupuestosTableReferences
-                                    ._tipoMuebleIdTable(db)
+                                currentColumn: table.empleadoId,
+                                referencedTable: $$TrabajosTableReferences
+                                    ._empleadoIdTable(db),
+                                referencedColumn: $$TrabajosTableReferences
+                                    ._empleadoIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+                    if (presupuestoId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.presupuestoId,
+                                referencedTable: $$TrabajosTableReferences
+                                    ._presupuestoIdTable(db),
+                                referencedColumn: $$TrabajosTableReferences
+                                    ._presupuestoIdTable(db)
                                     .id,
                               )
                               as T;
@@ -1869,19 +3408,19 @@ class $$PresupuestosTableTableManager
       );
 }
 
-typedef $$PresupuestosTableProcessedTableManager =
+typedef $$TrabajosTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $PresupuestosTable,
-      Presupuesto,
-      $$PresupuestosTableFilterComposer,
-      $$PresupuestosTableOrderingComposer,
-      $$PresupuestosTableAnnotationComposer,
-      $$PresupuestosTableCreateCompanionBuilder,
-      $$PresupuestosTableUpdateCompanionBuilder,
-      (Presupuesto, $$PresupuestosTableReferences),
-      Presupuesto,
-      PrefetchHooks Function({bool tipoMuebleId})
+      $TrabajosTable,
+      Trabajo,
+      $$TrabajosTableFilterComposer,
+      $$TrabajosTableOrderingComposer,
+      $$TrabajosTableAnnotationComposer,
+      $$TrabajosTableCreateCompanionBuilder,
+      $$TrabajosTableUpdateCompanionBuilder,
+      (Trabajo, $$TrabajosTableReferences),
+      Trabajo,
+      PrefetchHooks Function({bool empleadoId, bool presupuestoId})
     >;
 
 class $AppDatabaseManager {
@@ -1893,4 +3432,8 @@ class $AppDatabaseManager {
       $$TiposMuebleTableTableManager(_db, _db.tiposMueble);
   $$PresupuestosTableTableManager get presupuestos =>
       $$PresupuestosTableTableManager(_db, _db.presupuestos);
+  $$EmpleadosTableTableManager get empleados =>
+      $$EmpleadosTableTableManager(_db, _db.empleados);
+  $$TrabajosTableTableManager get trabajos =>
+      $$TrabajosTableTableManager(_db, _db.trabajos);
 }
