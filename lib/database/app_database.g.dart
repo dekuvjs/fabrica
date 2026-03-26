@@ -1787,6 +1787,888 @@ class TrabajosCompanion extends UpdateCompanion<Trabajo> {
   }
 }
 
+class $VentasMueblesTable extends VentasMuebles
+    with TableInfo<$VentasMueblesTable, VentasMueble> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VentasMueblesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _tipoMuebleIdMeta = const VerificationMeta(
+    'tipoMuebleId',
+  );
+  @override
+  late final GeneratedColumn<int> tipoMuebleId = GeneratedColumn<int>(
+    'tipo_mueble_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES tipos_mueble (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _cantidadMeta = const VerificationMeta(
+    'cantidad',
+  );
+  @override
+  late final GeneratedColumn<int> cantidad = GeneratedColumn<int>(
+    'cantidad',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _precioVentaMeta = const VerificationMeta(
+    'precioVenta',
+  );
+  @override
+  late final GeneratedColumn<double> precioVenta = GeneratedColumn<double>(
+    'precio_venta',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _costoTotalMeta = const VerificationMeta(
+    'costoTotal',
+  );
+  @override
+  late final GeneratedColumn<double> costoTotal = GeneratedColumn<double>(
+    'costo_total',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
+  @override
+  late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
+    'fecha',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    tipoMuebleId,
+    cantidad,
+    precioVenta,
+    costoTotal,
+    fecha,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ventas_muebles';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VentasMueble> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('tipo_mueble_id')) {
+      context.handle(
+        _tipoMuebleIdMeta,
+        tipoMuebleId.isAcceptableOrUnknown(
+          data['tipo_mueble_id']!,
+          _tipoMuebleIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_tipoMuebleIdMeta);
+    }
+    if (data.containsKey('cantidad')) {
+      context.handle(
+        _cantidadMeta,
+        cantidad.isAcceptableOrUnknown(data['cantidad']!, _cantidadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cantidadMeta);
+    }
+    if (data.containsKey('precio_venta')) {
+      context.handle(
+        _precioVentaMeta,
+        precioVenta.isAcceptableOrUnknown(
+          data['precio_venta']!,
+          _precioVentaMeta,
+        ),
+      );
+    }
+    if (data.containsKey('costo_total')) {
+      context.handle(
+        _costoTotalMeta,
+        costoTotal.isAcceptableOrUnknown(data['costo_total']!, _costoTotalMeta),
+      );
+    }
+    if (data.containsKey('fecha')) {
+      context.handle(
+        _fechaMeta,
+        fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fechaMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  VentasMueble map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VentasMueble(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      tipoMuebleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tipo_mueble_id'],
+      )!,
+      cantidad: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cantidad'],
+      )!,
+      precioVenta: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}precio_venta'],
+      )!,
+      costoTotal: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}costo_total'],
+      )!,
+      fecha: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}fecha'],
+      )!,
+    );
+  }
+
+  @override
+  $VentasMueblesTable createAlias(String alias) {
+    return $VentasMueblesTable(attachedDatabase, alias);
+  }
+}
+
+class VentasMueble extends DataClass implements Insertable<VentasMueble> {
+  final int id;
+  final int tipoMuebleId;
+  final int cantidad;
+
+  /// Precio total de venta (por el registro completo, no unitario).
+  final double precioVenta;
+
+  /// Costo total de fabricación basado en el presupuesto copiado de la venta.
+  final double costoTotal;
+  final DateTime fecha;
+  const VentasMueble({
+    required this.id,
+    required this.tipoMuebleId,
+    required this.cantidad,
+    required this.precioVenta,
+    required this.costoTotal,
+    required this.fecha,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['tipo_mueble_id'] = Variable<int>(tipoMuebleId);
+    map['cantidad'] = Variable<int>(cantidad);
+    map['precio_venta'] = Variable<double>(precioVenta);
+    map['costo_total'] = Variable<double>(costoTotal);
+    map['fecha'] = Variable<DateTime>(fecha);
+    return map;
+  }
+
+  VentasMueblesCompanion toCompanion(bool nullToAbsent) {
+    return VentasMueblesCompanion(
+      id: Value(id),
+      tipoMuebleId: Value(tipoMuebleId),
+      cantidad: Value(cantidad),
+      precioVenta: Value(precioVenta),
+      costoTotal: Value(costoTotal),
+      fecha: Value(fecha),
+    );
+  }
+
+  factory VentasMueble.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VentasMueble(
+      id: serializer.fromJson<int>(json['id']),
+      tipoMuebleId: serializer.fromJson<int>(json['tipoMuebleId']),
+      cantidad: serializer.fromJson<int>(json['cantidad']),
+      precioVenta: serializer.fromJson<double>(json['precioVenta']),
+      costoTotal: serializer.fromJson<double>(json['costoTotal']),
+      fecha: serializer.fromJson<DateTime>(json['fecha']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'tipoMuebleId': serializer.toJson<int>(tipoMuebleId),
+      'cantidad': serializer.toJson<int>(cantidad),
+      'precioVenta': serializer.toJson<double>(precioVenta),
+      'costoTotal': serializer.toJson<double>(costoTotal),
+      'fecha': serializer.toJson<DateTime>(fecha),
+    };
+  }
+
+  VentasMueble copyWith({
+    int? id,
+    int? tipoMuebleId,
+    int? cantidad,
+    double? precioVenta,
+    double? costoTotal,
+    DateTime? fecha,
+  }) => VentasMueble(
+    id: id ?? this.id,
+    tipoMuebleId: tipoMuebleId ?? this.tipoMuebleId,
+    cantidad: cantidad ?? this.cantidad,
+    precioVenta: precioVenta ?? this.precioVenta,
+    costoTotal: costoTotal ?? this.costoTotal,
+    fecha: fecha ?? this.fecha,
+  );
+  VentasMueble copyWithCompanion(VentasMueblesCompanion data) {
+    return VentasMueble(
+      id: data.id.present ? data.id.value : this.id,
+      tipoMuebleId: data.tipoMuebleId.present
+          ? data.tipoMuebleId.value
+          : this.tipoMuebleId,
+      cantidad: data.cantidad.present ? data.cantidad.value : this.cantidad,
+      precioVenta: data.precioVenta.present
+          ? data.precioVenta.value
+          : this.precioVenta,
+      costoTotal: data.costoTotal.present
+          ? data.costoTotal.value
+          : this.costoTotal,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VentasMueble(')
+          ..write('id: $id, ')
+          ..write('tipoMuebleId: $tipoMuebleId, ')
+          ..write('cantidad: $cantidad, ')
+          ..write('precioVenta: $precioVenta, ')
+          ..write('costoTotal: $costoTotal, ')
+          ..write('fecha: $fecha')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, tipoMuebleId, cantidad, precioVenta, costoTotal, fecha);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VentasMueble &&
+          other.id == this.id &&
+          other.tipoMuebleId == this.tipoMuebleId &&
+          other.cantidad == this.cantidad &&
+          other.precioVenta == this.precioVenta &&
+          other.costoTotal == this.costoTotal &&
+          other.fecha == this.fecha);
+}
+
+class VentasMueblesCompanion extends UpdateCompanion<VentasMueble> {
+  final Value<int> id;
+  final Value<int> tipoMuebleId;
+  final Value<int> cantidad;
+  final Value<double> precioVenta;
+  final Value<double> costoTotal;
+  final Value<DateTime> fecha;
+  const VentasMueblesCompanion({
+    this.id = const Value.absent(),
+    this.tipoMuebleId = const Value.absent(),
+    this.cantidad = const Value.absent(),
+    this.precioVenta = const Value.absent(),
+    this.costoTotal = const Value.absent(),
+    this.fecha = const Value.absent(),
+  });
+  VentasMueblesCompanion.insert({
+    this.id = const Value.absent(),
+    required int tipoMuebleId,
+    required int cantidad,
+    this.precioVenta = const Value.absent(),
+    this.costoTotal = const Value.absent(),
+    required DateTime fecha,
+  }) : tipoMuebleId = Value(tipoMuebleId),
+       cantidad = Value(cantidad),
+       fecha = Value(fecha);
+  static Insertable<VentasMueble> custom({
+    Expression<int>? id,
+    Expression<int>? tipoMuebleId,
+    Expression<int>? cantidad,
+    Expression<double>? precioVenta,
+    Expression<double>? costoTotal,
+    Expression<DateTime>? fecha,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (tipoMuebleId != null) 'tipo_mueble_id': tipoMuebleId,
+      if (cantidad != null) 'cantidad': cantidad,
+      if (precioVenta != null) 'precio_venta': precioVenta,
+      if (costoTotal != null) 'costo_total': costoTotal,
+      if (fecha != null) 'fecha': fecha,
+    });
+  }
+
+  VentasMueblesCompanion copyWith({
+    Value<int>? id,
+    Value<int>? tipoMuebleId,
+    Value<int>? cantidad,
+    Value<double>? precioVenta,
+    Value<double>? costoTotal,
+    Value<DateTime>? fecha,
+  }) {
+    return VentasMueblesCompanion(
+      id: id ?? this.id,
+      tipoMuebleId: tipoMuebleId ?? this.tipoMuebleId,
+      cantidad: cantidad ?? this.cantidad,
+      precioVenta: precioVenta ?? this.precioVenta,
+      costoTotal: costoTotal ?? this.costoTotal,
+      fecha: fecha ?? this.fecha,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (tipoMuebleId.present) {
+      map['tipo_mueble_id'] = Variable<int>(tipoMuebleId.value);
+    }
+    if (cantidad.present) {
+      map['cantidad'] = Variable<int>(cantidad.value);
+    }
+    if (precioVenta.present) {
+      map['precio_venta'] = Variable<double>(precioVenta.value);
+    }
+    if (costoTotal.present) {
+      map['costo_total'] = Variable<double>(costoTotal.value);
+    }
+    if (fecha.present) {
+      map['fecha'] = Variable<DateTime>(fecha.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VentasMueblesCompanion(')
+          ..write('id: $id, ')
+          ..write('tipoMuebleId: $tipoMuebleId, ')
+          ..write('cantidad: $cantidad, ')
+          ..write('precioVenta: $precioVenta, ')
+          ..write('costoTotal: $costoTotal, ')
+          ..write('fecha: $fecha')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $VentaPresupuestoLineasTable extends VentaPresupuestoLineas
+    with TableInfo<$VentaPresupuestoLineasTable, VentaPresupuestoLinea> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VentaPresupuestoLineasTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _ventaIdMeta = const VerificationMeta(
+    'ventaId',
+  );
+  @override
+  late final GeneratedColumn<int> ventaId = GeneratedColumn<int>(
+    'venta_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ventas_muebles (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _nombreMeta = const VerificationMeta('nombre');
+  @override
+  late final GeneratedColumn<String> nombre = GeneratedColumn<String>(
+    'nombre',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descripcionMeta = const VerificationMeta(
+    'descripcion',
+  );
+  @override
+  late final GeneratedColumn<String> descripcion = GeneratedColumn<String>(
+    'descripcion',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cantidadMeta = const VerificationMeta(
+    'cantidad',
+  );
+  @override
+  late final GeneratedColumn<int> cantidad = GeneratedColumn<int>(
+    'cantidad',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _precioUnitarioMeta = const VerificationMeta(
+    'precioUnitario',
+  );
+  @override
+  late final GeneratedColumn<double> precioUnitario = GeneratedColumn<double>(
+    'precio_unitario',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _precioTotalMeta = const VerificationMeta(
+    'precioTotal',
+  );
+  @override
+  late final GeneratedColumn<double> precioTotal = GeneratedColumn<double>(
+    'precio_total',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    ventaId,
+    nombre,
+    descripcion,
+    cantidad,
+    precioUnitario,
+    precioTotal,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'venta_presupuesto_lineas';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VentaPresupuestoLinea> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('venta_id')) {
+      context.handle(
+        _ventaIdMeta,
+        ventaId.isAcceptableOrUnknown(data['venta_id']!, _ventaIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ventaIdMeta);
+    }
+    if (data.containsKey('nombre')) {
+      context.handle(
+        _nombreMeta,
+        nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nombreMeta);
+    }
+    if (data.containsKey('descripcion')) {
+      context.handle(
+        _descripcionMeta,
+        descripcion.isAcceptableOrUnknown(
+          data['descripcion']!,
+          _descripcionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('cantidad')) {
+      context.handle(
+        _cantidadMeta,
+        cantidad.isAcceptableOrUnknown(data['cantidad']!, _cantidadMeta),
+      );
+    }
+    if (data.containsKey('precio_unitario')) {
+      context.handle(
+        _precioUnitarioMeta,
+        precioUnitario.isAcceptableOrUnknown(
+          data['precio_unitario']!,
+          _precioUnitarioMeta,
+        ),
+      );
+    }
+    if (data.containsKey('precio_total')) {
+      context.handle(
+        _precioTotalMeta,
+        precioTotal.isAcceptableOrUnknown(
+          data['precio_total']!,
+          _precioTotalMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  VentaPresupuestoLinea map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VentaPresupuestoLinea(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      ventaId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}venta_id'],
+      )!,
+      nombre: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nombre'],
+      )!,
+      descripcion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}descripcion'],
+      ),
+      cantidad: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cantidad'],
+      )!,
+      precioUnitario: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}precio_unitario'],
+      )!,
+      precioTotal: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}precio_total'],
+      )!,
+    );
+  }
+
+  @override
+  $VentaPresupuestoLineasTable createAlias(String alias) {
+    return $VentaPresupuestoLineasTable(attachedDatabase, alias);
+  }
+}
+
+class VentaPresupuestoLinea extends DataClass
+    implements Insertable<VentaPresupuestoLinea> {
+  final int id;
+  final int ventaId;
+  final String nombre;
+  final String? descripcion;
+  final int cantidad;
+  final double precioUnitario;
+  final double precioTotal;
+  const VentaPresupuestoLinea({
+    required this.id,
+    required this.ventaId,
+    required this.nombre,
+    this.descripcion,
+    required this.cantidad,
+    required this.precioUnitario,
+    required this.precioTotal,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['venta_id'] = Variable<int>(ventaId);
+    map['nombre'] = Variable<String>(nombre);
+    if (!nullToAbsent || descripcion != null) {
+      map['descripcion'] = Variable<String>(descripcion);
+    }
+    map['cantidad'] = Variable<int>(cantidad);
+    map['precio_unitario'] = Variable<double>(precioUnitario);
+    map['precio_total'] = Variable<double>(precioTotal);
+    return map;
+  }
+
+  VentaPresupuestoLineasCompanion toCompanion(bool nullToAbsent) {
+    return VentaPresupuestoLineasCompanion(
+      id: Value(id),
+      ventaId: Value(ventaId),
+      nombre: Value(nombre),
+      descripcion: descripcion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(descripcion),
+      cantidad: Value(cantidad),
+      precioUnitario: Value(precioUnitario),
+      precioTotal: Value(precioTotal),
+    );
+  }
+
+  factory VentaPresupuestoLinea.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VentaPresupuestoLinea(
+      id: serializer.fromJson<int>(json['id']),
+      ventaId: serializer.fromJson<int>(json['ventaId']),
+      nombre: serializer.fromJson<String>(json['nombre']),
+      descripcion: serializer.fromJson<String?>(json['descripcion']),
+      cantidad: serializer.fromJson<int>(json['cantidad']),
+      precioUnitario: serializer.fromJson<double>(json['precioUnitario']),
+      precioTotal: serializer.fromJson<double>(json['precioTotal']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'ventaId': serializer.toJson<int>(ventaId),
+      'nombre': serializer.toJson<String>(nombre),
+      'descripcion': serializer.toJson<String?>(descripcion),
+      'cantidad': serializer.toJson<int>(cantidad),
+      'precioUnitario': serializer.toJson<double>(precioUnitario),
+      'precioTotal': serializer.toJson<double>(precioTotal),
+    };
+  }
+
+  VentaPresupuestoLinea copyWith({
+    int? id,
+    int? ventaId,
+    String? nombre,
+    Value<String?> descripcion = const Value.absent(),
+    int? cantidad,
+    double? precioUnitario,
+    double? precioTotal,
+  }) => VentaPresupuestoLinea(
+    id: id ?? this.id,
+    ventaId: ventaId ?? this.ventaId,
+    nombre: nombre ?? this.nombre,
+    descripcion: descripcion.present ? descripcion.value : this.descripcion,
+    cantidad: cantidad ?? this.cantidad,
+    precioUnitario: precioUnitario ?? this.precioUnitario,
+    precioTotal: precioTotal ?? this.precioTotal,
+  );
+  VentaPresupuestoLinea copyWithCompanion(
+    VentaPresupuestoLineasCompanion data,
+  ) {
+    return VentaPresupuestoLinea(
+      id: data.id.present ? data.id.value : this.id,
+      ventaId: data.ventaId.present ? data.ventaId.value : this.ventaId,
+      nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      descripcion: data.descripcion.present
+          ? data.descripcion.value
+          : this.descripcion,
+      cantidad: data.cantidad.present ? data.cantidad.value : this.cantidad,
+      precioUnitario: data.precioUnitario.present
+          ? data.precioUnitario.value
+          : this.precioUnitario,
+      precioTotal: data.precioTotal.present
+          ? data.precioTotal.value
+          : this.precioTotal,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VentaPresupuestoLinea(')
+          ..write('id: $id, ')
+          ..write('ventaId: $ventaId, ')
+          ..write('nombre: $nombre, ')
+          ..write('descripcion: $descripcion, ')
+          ..write('cantidad: $cantidad, ')
+          ..write('precioUnitario: $precioUnitario, ')
+          ..write('precioTotal: $precioTotal')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    ventaId,
+    nombre,
+    descripcion,
+    cantidad,
+    precioUnitario,
+    precioTotal,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VentaPresupuestoLinea &&
+          other.id == this.id &&
+          other.ventaId == this.ventaId &&
+          other.nombre == this.nombre &&
+          other.descripcion == this.descripcion &&
+          other.cantidad == this.cantidad &&
+          other.precioUnitario == this.precioUnitario &&
+          other.precioTotal == this.precioTotal);
+}
+
+class VentaPresupuestoLineasCompanion
+    extends UpdateCompanion<VentaPresupuestoLinea> {
+  final Value<int> id;
+  final Value<int> ventaId;
+  final Value<String> nombre;
+  final Value<String?> descripcion;
+  final Value<int> cantidad;
+  final Value<double> precioUnitario;
+  final Value<double> precioTotal;
+  const VentaPresupuestoLineasCompanion({
+    this.id = const Value.absent(),
+    this.ventaId = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.descripcion = const Value.absent(),
+    this.cantidad = const Value.absent(),
+    this.precioUnitario = const Value.absent(),
+    this.precioTotal = const Value.absent(),
+  });
+  VentaPresupuestoLineasCompanion.insert({
+    this.id = const Value.absent(),
+    required int ventaId,
+    required String nombre,
+    this.descripcion = const Value.absent(),
+    this.cantidad = const Value.absent(),
+    this.precioUnitario = const Value.absent(),
+    this.precioTotal = const Value.absent(),
+  }) : ventaId = Value(ventaId),
+       nombre = Value(nombre);
+  static Insertable<VentaPresupuestoLinea> custom({
+    Expression<int>? id,
+    Expression<int>? ventaId,
+    Expression<String>? nombre,
+    Expression<String>? descripcion,
+    Expression<int>? cantidad,
+    Expression<double>? precioUnitario,
+    Expression<double>? precioTotal,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (ventaId != null) 'venta_id': ventaId,
+      if (nombre != null) 'nombre': nombre,
+      if (descripcion != null) 'descripcion': descripcion,
+      if (cantidad != null) 'cantidad': cantidad,
+      if (precioUnitario != null) 'precio_unitario': precioUnitario,
+      if (precioTotal != null) 'precio_total': precioTotal,
+    });
+  }
+
+  VentaPresupuestoLineasCompanion copyWith({
+    Value<int>? id,
+    Value<int>? ventaId,
+    Value<String>? nombre,
+    Value<String?>? descripcion,
+    Value<int>? cantidad,
+    Value<double>? precioUnitario,
+    Value<double>? precioTotal,
+  }) {
+    return VentaPresupuestoLineasCompanion(
+      id: id ?? this.id,
+      ventaId: ventaId ?? this.ventaId,
+      nombre: nombre ?? this.nombre,
+      descripcion: descripcion ?? this.descripcion,
+      cantidad: cantidad ?? this.cantidad,
+      precioUnitario: precioUnitario ?? this.precioUnitario,
+      precioTotal: precioTotal ?? this.precioTotal,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (ventaId.present) {
+      map['venta_id'] = Variable<int>(ventaId.value);
+    }
+    if (nombre.present) {
+      map['nombre'] = Variable<String>(nombre.value);
+    }
+    if (descripcion.present) {
+      map['descripcion'] = Variable<String>(descripcion.value);
+    }
+    if (cantidad.present) {
+      map['cantidad'] = Variable<int>(cantidad.value);
+    }
+    if (precioUnitario.present) {
+      map['precio_unitario'] = Variable<double>(precioUnitario.value);
+    }
+    if (precioTotal.present) {
+      map['precio_total'] = Variable<double>(precioTotal.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VentaPresupuestoLineasCompanion(')
+          ..write('id: $id, ')
+          ..write('ventaId: $ventaId, ')
+          ..write('nombre: $nombre, ')
+          ..write('descripcion: $descripcion, ')
+          ..write('cantidad: $cantidad, ')
+          ..write('precioUnitario: $precioUnitario, ')
+          ..write('precioTotal: $precioTotal')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1795,6 +2677,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PresupuestosTable presupuestos = $PresupuestosTable(this);
   late final $EmpleadosTable empleados = $EmpleadosTable(this);
   late final $TrabajosTable trabajos = $TrabajosTable(this);
+  late final $VentasMueblesTable ventasMuebles = $VentasMueblesTable(this);
+  late final $VentaPresupuestoLineasTable ventaPresupuestoLineas =
+      $VentaPresupuestoLineasTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1805,6 +2690,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     presupuestos,
     empleados,
     trabajos,
+    ventasMuebles,
+    ventaPresupuestoLineas,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -1821,6 +2708,15 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('trabajos', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'ventas_muebles',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('venta_presupuesto_lineas', kind: UpdateKind.delete),
+      ],
     ),
   ]);
 }
@@ -2063,6 +2959,27 @@ final class $$TiposMuebleTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$VentasMueblesTable, List<VentasMueble>>
+  _ventasMueblesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.ventasMuebles,
+    aliasName: $_aliasNameGenerator(
+      db.tiposMueble.id,
+      db.ventasMuebles.tipoMuebleId,
+    ),
+  );
+
+  $$VentasMueblesTableProcessedTableManager get ventasMueblesRefs {
+    final manager = $$VentasMueblesTableTableManager(
+      $_db,
+      $_db.ventasMuebles,
+    ).filter((f) => f.tipoMuebleId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_ventasMueblesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$TiposMuebleTableFilterComposer
@@ -2100,6 +3017,31 @@ class $$TiposMuebleTableFilterComposer
           }) => $$PresupuestosTableFilterComposer(
             $db: $db,
             $table: $db.presupuestos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> ventasMueblesRefs(
+    Expression<bool> Function($$VentasMueblesTableFilterComposer f) f,
+  ) {
+    final $$VentasMueblesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.ventasMuebles,
+      getReferencedColumn: (t) => t.tipoMuebleId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VentasMueblesTableFilterComposer(
+            $db: $db,
+            $table: $db.ventasMuebles,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2169,6 +3111,31 @@ class $$TiposMuebleTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> ventasMueblesRefs<T extends Object>(
+    Expression<T> Function($$VentasMueblesTableAnnotationComposer a) f,
+  ) {
+    final $$VentasMueblesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.ventasMuebles,
+      getReferencedColumn: (t) => t.tipoMuebleId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VentasMueblesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ventasMuebles,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$TiposMuebleTableTableManager
@@ -2184,7 +3151,10 @@ class $$TiposMuebleTableTableManager
           $$TiposMuebleTableUpdateCompanionBuilder,
           (TiposMuebleData, $$TiposMuebleTableReferences),
           TiposMuebleData,
-          PrefetchHooks Function({bool presupuestosRefs})
+          PrefetchHooks Function({
+            bool presupuestosRefs,
+            bool ventasMueblesRefs,
+          })
         > {
   $$TiposMuebleTableTableManager(_$AppDatabase db, $TiposMuebleTable table)
     : super(
@@ -2215,38 +3185,63 @@ class $$TiposMuebleTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({presupuestosRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (presupuestosRefs) db.presupuestos],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (presupuestosRefs)
-                    await $_getPrefetchedData<
-                      TiposMuebleData,
-                      $TiposMuebleTable,
-                      Presupuesto
-                    >(
-                      currentTable: table,
-                      referencedTable: $$TiposMuebleTableReferences
-                          ._presupuestosRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$TiposMuebleTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).presupuestosRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where(
-                            (e) => e.tipoMuebleId == item.id,
-                          ),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({presupuestosRefs = false, ventasMueblesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (presupuestosRefs) db.presupuestos,
+                    if (ventasMueblesRefs) db.ventasMuebles,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (presupuestosRefs)
+                        await $_getPrefetchedData<
+                          TiposMuebleData,
+                          $TiposMuebleTable,
+                          Presupuesto
+                        >(
+                          currentTable: table,
+                          referencedTable: $$TiposMuebleTableReferences
+                              ._presupuestosRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$TiposMuebleTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).presupuestosRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.tipoMuebleId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (ventasMueblesRefs)
+                        await $_getPrefetchedData<
+                          TiposMuebleData,
+                          $TiposMuebleTable,
+                          VentasMueble
+                        >(
+                          currentTable: table,
+                          referencedTable: $$TiposMuebleTableReferences
+                              ._ventasMueblesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$TiposMuebleTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).ventasMueblesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.tipoMuebleId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -2263,7 +3258,7 @@ typedef $$TiposMuebleTableProcessedTableManager =
       $$TiposMuebleTableUpdateCompanionBuilder,
       (TiposMuebleData, $$TiposMuebleTableReferences),
       TiposMuebleData,
-      PrefetchHooks Function({bool presupuestosRefs})
+      PrefetchHooks Function({bool presupuestosRefs, bool ventasMueblesRefs})
     >;
 typedef $$PresupuestosTableCreateCompanionBuilder =
     PresupuestosCompanion Function({
@@ -3422,6 +4417,841 @@ typedef $$TrabajosTableProcessedTableManager =
       Trabajo,
       PrefetchHooks Function({bool empleadoId, bool presupuestoId})
     >;
+typedef $$VentasMueblesTableCreateCompanionBuilder =
+    VentasMueblesCompanion Function({
+      Value<int> id,
+      required int tipoMuebleId,
+      required int cantidad,
+      Value<double> precioVenta,
+      Value<double> costoTotal,
+      required DateTime fecha,
+    });
+typedef $$VentasMueblesTableUpdateCompanionBuilder =
+    VentasMueblesCompanion Function({
+      Value<int> id,
+      Value<int> tipoMuebleId,
+      Value<int> cantidad,
+      Value<double> precioVenta,
+      Value<double> costoTotal,
+      Value<DateTime> fecha,
+    });
+
+final class $$VentasMueblesTableReferences
+    extends BaseReferences<_$AppDatabase, $VentasMueblesTable, VentasMueble> {
+  $$VentasMueblesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $TiposMuebleTable _tipoMuebleIdTable(_$AppDatabase db) =>
+      db.tiposMueble.createAlias(
+        $_aliasNameGenerator(db.ventasMuebles.tipoMuebleId, db.tiposMueble.id),
+      );
+
+  $$TiposMuebleTableProcessedTableManager get tipoMuebleId {
+    final $_column = $_itemColumn<int>('tipo_mueble_id')!;
+
+    final manager = $$TiposMuebleTableTableManager(
+      $_db,
+      $_db.tiposMueble,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_tipoMuebleIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $VentaPresupuestoLineasTable,
+    List<VentaPresupuestoLinea>
+  >
+  _ventaPresupuestoLineasRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.ventaPresupuestoLineas,
+        aliasName: $_aliasNameGenerator(
+          db.ventasMuebles.id,
+          db.ventaPresupuestoLineas.ventaId,
+        ),
+      );
+
+  $$VentaPresupuestoLineasTableProcessedTableManager
+  get ventaPresupuestoLineasRefs {
+    final manager = $$VentaPresupuestoLineasTableTableManager(
+      $_db,
+      $_db.ventaPresupuestoLineas,
+    ).filter((f) => f.ventaId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _ventaPresupuestoLineasRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$VentasMueblesTableFilterComposer
+    extends Composer<_$AppDatabase, $VentasMueblesTable> {
+  $$VentasMueblesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cantidad => $composableBuilder(
+    column: $table.cantidad,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get precioVenta => $composableBuilder(
+    column: $table.precioVenta,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get costoTotal => $composableBuilder(
+    column: $table.costoTotal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get fecha => $composableBuilder(
+    column: $table.fecha,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$TiposMuebleTableFilterComposer get tipoMuebleId {
+    final $$TiposMuebleTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.tipoMuebleId,
+      referencedTable: $db.tiposMueble,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TiposMuebleTableFilterComposer(
+            $db: $db,
+            $table: $db.tiposMueble,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> ventaPresupuestoLineasRefs(
+    Expression<bool> Function($$VentaPresupuestoLineasTableFilterComposer f) f,
+  ) {
+    final $$VentaPresupuestoLineasTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.ventaPresupuestoLineas,
+          getReferencedColumn: (t) => t.ventaId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$VentaPresupuestoLineasTableFilterComposer(
+                $db: $db,
+                $table: $db.ventaPresupuestoLineas,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$VentasMueblesTableOrderingComposer
+    extends Composer<_$AppDatabase, $VentasMueblesTable> {
+  $$VentasMueblesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cantidad => $composableBuilder(
+    column: $table.cantidad,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get precioVenta => $composableBuilder(
+    column: $table.precioVenta,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get costoTotal => $composableBuilder(
+    column: $table.costoTotal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get fecha => $composableBuilder(
+    column: $table.fecha,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$TiposMuebleTableOrderingComposer get tipoMuebleId {
+    final $$TiposMuebleTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.tipoMuebleId,
+      referencedTable: $db.tiposMueble,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TiposMuebleTableOrderingComposer(
+            $db: $db,
+            $table: $db.tiposMueble,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$VentasMueblesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VentasMueblesTable> {
+  $$VentasMueblesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get cantidad =>
+      $composableBuilder(column: $table.cantidad, builder: (column) => column);
+
+  GeneratedColumn<double> get precioVenta => $composableBuilder(
+    column: $table.precioVenta,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get costoTotal => $composableBuilder(
+    column: $table.costoTotal,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get fecha =>
+      $composableBuilder(column: $table.fecha, builder: (column) => column);
+
+  $$TiposMuebleTableAnnotationComposer get tipoMuebleId {
+    final $$TiposMuebleTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.tipoMuebleId,
+      referencedTable: $db.tiposMueble,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TiposMuebleTableAnnotationComposer(
+            $db: $db,
+            $table: $db.tiposMueble,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> ventaPresupuestoLineasRefs<T extends Object>(
+    Expression<T> Function($$VentaPresupuestoLineasTableAnnotationComposer a) f,
+  ) {
+    final $$VentaPresupuestoLineasTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.ventaPresupuestoLineas,
+          getReferencedColumn: (t) => t.ventaId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$VentaPresupuestoLineasTableAnnotationComposer(
+                $db: $db,
+                $table: $db.ventaPresupuestoLineas,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$VentasMueblesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VentasMueblesTable,
+          VentasMueble,
+          $$VentasMueblesTableFilterComposer,
+          $$VentasMueblesTableOrderingComposer,
+          $$VentasMueblesTableAnnotationComposer,
+          $$VentasMueblesTableCreateCompanionBuilder,
+          $$VentasMueblesTableUpdateCompanionBuilder,
+          (VentasMueble, $$VentasMueblesTableReferences),
+          VentasMueble,
+          PrefetchHooks Function({
+            bool tipoMuebleId,
+            bool ventaPresupuestoLineasRefs,
+          })
+        > {
+  $$VentasMueblesTableTableManager(_$AppDatabase db, $VentasMueblesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VentasMueblesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VentasMueblesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$VentasMueblesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> tipoMuebleId = const Value.absent(),
+                Value<int> cantidad = const Value.absent(),
+                Value<double> precioVenta = const Value.absent(),
+                Value<double> costoTotal = const Value.absent(),
+                Value<DateTime> fecha = const Value.absent(),
+              }) => VentasMueblesCompanion(
+                id: id,
+                tipoMuebleId: tipoMuebleId,
+                cantidad: cantidad,
+                precioVenta: precioVenta,
+                costoTotal: costoTotal,
+                fecha: fecha,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int tipoMuebleId,
+                required int cantidad,
+                Value<double> precioVenta = const Value.absent(),
+                Value<double> costoTotal = const Value.absent(),
+                required DateTime fecha,
+              }) => VentasMueblesCompanion.insert(
+                id: id,
+                tipoMuebleId: tipoMuebleId,
+                cantidad: cantidad,
+                precioVenta: precioVenta,
+                costoTotal: costoTotal,
+                fecha: fecha,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$VentasMueblesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({tipoMuebleId = false, ventaPresupuestoLineasRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (ventaPresupuestoLineasRefs) db.ventaPresupuestoLineas,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (tipoMuebleId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.tipoMuebleId,
+                                    referencedTable:
+                                        $$VentasMueblesTableReferences
+                                            ._tipoMuebleIdTable(db),
+                                    referencedColumn:
+                                        $$VentasMueblesTableReferences
+                                            ._tipoMuebleIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (ventaPresupuestoLineasRefs)
+                        await $_getPrefetchedData<
+                          VentasMueble,
+                          $VentasMueblesTable,
+                          VentaPresupuestoLinea
+                        >(
+                          currentTable: table,
+                          referencedTable: $$VentasMueblesTableReferences
+                              ._ventaPresupuestoLineasRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$VentasMueblesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).ventaPresupuestoLineasRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.ventaId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$VentasMueblesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VentasMueblesTable,
+      VentasMueble,
+      $$VentasMueblesTableFilterComposer,
+      $$VentasMueblesTableOrderingComposer,
+      $$VentasMueblesTableAnnotationComposer,
+      $$VentasMueblesTableCreateCompanionBuilder,
+      $$VentasMueblesTableUpdateCompanionBuilder,
+      (VentasMueble, $$VentasMueblesTableReferences),
+      VentasMueble,
+      PrefetchHooks Function({
+        bool tipoMuebleId,
+        bool ventaPresupuestoLineasRefs,
+      })
+    >;
+typedef $$VentaPresupuestoLineasTableCreateCompanionBuilder =
+    VentaPresupuestoLineasCompanion Function({
+      Value<int> id,
+      required int ventaId,
+      required String nombre,
+      Value<String?> descripcion,
+      Value<int> cantidad,
+      Value<double> precioUnitario,
+      Value<double> precioTotal,
+    });
+typedef $$VentaPresupuestoLineasTableUpdateCompanionBuilder =
+    VentaPresupuestoLineasCompanion Function({
+      Value<int> id,
+      Value<int> ventaId,
+      Value<String> nombre,
+      Value<String?> descripcion,
+      Value<int> cantidad,
+      Value<double> precioUnitario,
+      Value<double> precioTotal,
+    });
+
+final class $$VentaPresupuestoLineasTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $VentaPresupuestoLineasTable,
+          VentaPresupuestoLinea
+        > {
+  $$VentaPresupuestoLineasTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $VentasMueblesTable _ventaIdTable(_$AppDatabase db) =>
+      db.ventasMuebles.createAlias(
+        $_aliasNameGenerator(
+          db.ventaPresupuestoLineas.ventaId,
+          db.ventasMuebles.id,
+        ),
+      );
+
+  $$VentasMueblesTableProcessedTableManager get ventaId {
+    final $_column = $_itemColumn<int>('venta_id')!;
+
+    final manager = $$VentasMueblesTableTableManager(
+      $_db,
+      $_db.ventasMuebles,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_ventaIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$VentaPresupuestoLineasTableFilterComposer
+    extends Composer<_$AppDatabase, $VentaPresupuestoLineasTable> {
+  $$VentaPresupuestoLineasTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nombre => $composableBuilder(
+    column: $table.nombre,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get descripcion => $composableBuilder(
+    column: $table.descripcion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cantidad => $composableBuilder(
+    column: $table.cantidad,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get precioUnitario => $composableBuilder(
+    column: $table.precioUnitario,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get precioTotal => $composableBuilder(
+    column: $table.precioTotal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$VentasMueblesTableFilterComposer get ventaId {
+    final $$VentasMueblesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ventaId,
+      referencedTable: $db.ventasMuebles,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VentasMueblesTableFilterComposer(
+            $db: $db,
+            $table: $db.ventasMuebles,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$VentaPresupuestoLineasTableOrderingComposer
+    extends Composer<_$AppDatabase, $VentaPresupuestoLineasTable> {
+  $$VentaPresupuestoLineasTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nombre => $composableBuilder(
+    column: $table.nombre,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get descripcion => $composableBuilder(
+    column: $table.descripcion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cantidad => $composableBuilder(
+    column: $table.cantidad,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get precioUnitario => $composableBuilder(
+    column: $table.precioUnitario,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get precioTotal => $composableBuilder(
+    column: $table.precioTotal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$VentasMueblesTableOrderingComposer get ventaId {
+    final $$VentasMueblesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ventaId,
+      referencedTable: $db.ventasMuebles,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VentasMueblesTableOrderingComposer(
+            $db: $db,
+            $table: $db.ventasMuebles,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$VentaPresupuestoLineasTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VentaPresupuestoLineasTable> {
+  $$VentaPresupuestoLineasTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get nombre =>
+      $composableBuilder(column: $table.nombre, builder: (column) => column);
+
+  GeneratedColumn<String> get descripcion => $composableBuilder(
+    column: $table.descripcion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get cantidad =>
+      $composableBuilder(column: $table.cantidad, builder: (column) => column);
+
+  GeneratedColumn<double> get precioUnitario => $composableBuilder(
+    column: $table.precioUnitario,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get precioTotal => $composableBuilder(
+    column: $table.precioTotal,
+    builder: (column) => column,
+  );
+
+  $$VentasMueblesTableAnnotationComposer get ventaId {
+    final $$VentasMueblesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ventaId,
+      referencedTable: $db.ventasMuebles,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VentasMueblesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ventasMuebles,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$VentaPresupuestoLineasTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VentaPresupuestoLineasTable,
+          VentaPresupuestoLinea,
+          $$VentaPresupuestoLineasTableFilterComposer,
+          $$VentaPresupuestoLineasTableOrderingComposer,
+          $$VentaPresupuestoLineasTableAnnotationComposer,
+          $$VentaPresupuestoLineasTableCreateCompanionBuilder,
+          $$VentaPresupuestoLineasTableUpdateCompanionBuilder,
+          (VentaPresupuestoLinea, $$VentaPresupuestoLineasTableReferences),
+          VentaPresupuestoLinea,
+          PrefetchHooks Function({bool ventaId})
+        > {
+  $$VentaPresupuestoLineasTableTableManager(
+    _$AppDatabase db,
+    $VentaPresupuestoLineasTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VentaPresupuestoLineasTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$VentaPresupuestoLineasTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$VentaPresupuestoLineasTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> ventaId = const Value.absent(),
+                Value<String> nombre = const Value.absent(),
+                Value<String?> descripcion = const Value.absent(),
+                Value<int> cantidad = const Value.absent(),
+                Value<double> precioUnitario = const Value.absent(),
+                Value<double> precioTotal = const Value.absent(),
+              }) => VentaPresupuestoLineasCompanion(
+                id: id,
+                ventaId: ventaId,
+                nombre: nombre,
+                descripcion: descripcion,
+                cantidad: cantidad,
+                precioUnitario: precioUnitario,
+                precioTotal: precioTotal,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int ventaId,
+                required String nombre,
+                Value<String?> descripcion = const Value.absent(),
+                Value<int> cantidad = const Value.absent(),
+                Value<double> precioUnitario = const Value.absent(),
+                Value<double> precioTotal = const Value.absent(),
+              }) => VentaPresupuestoLineasCompanion.insert(
+                id: id,
+                ventaId: ventaId,
+                nombre: nombre,
+                descripcion: descripcion,
+                cantidad: cantidad,
+                precioUnitario: precioUnitario,
+                precioTotal: precioTotal,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$VentaPresupuestoLineasTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({ventaId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (ventaId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.ventaId,
+                                referencedTable:
+                                    $$VentaPresupuestoLineasTableReferences
+                                        ._ventaIdTable(db),
+                                referencedColumn:
+                                    $$VentaPresupuestoLineasTableReferences
+                                        ._ventaIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$VentaPresupuestoLineasTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VentaPresupuestoLineasTable,
+      VentaPresupuestoLinea,
+      $$VentaPresupuestoLineasTableFilterComposer,
+      $$VentaPresupuestoLineasTableOrderingComposer,
+      $$VentaPresupuestoLineasTableAnnotationComposer,
+      $$VentaPresupuestoLineasTableCreateCompanionBuilder,
+      $$VentaPresupuestoLineasTableUpdateCompanionBuilder,
+      (VentaPresupuestoLinea, $$VentaPresupuestoLineasTableReferences),
+      VentaPresupuestoLinea,
+      PrefetchHooks Function({bool ventaId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3436,4 +5266,11 @@ class $AppDatabaseManager {
       $$EmpleadosTableTableManager(_db, _db.empleados);
   $$TrabajosTableTableManager get trabajos =>
       $$TrabajosTableTableManager(_db, _db.trabajos);
+  $$VentasMueblesTableTableManager get ventasMuebles =>
+      $$VentasMueblesTableTableManager(_db, _db.ventasMuebles);
+  $$VentaPresupuestoLineasTableTableManager get ventaPresupuestoLineas =>
+      $$VentaPresupuestoLineasTableTableManager(
+        _db,
+        _db.ventaPresupuestoLineas,
+      );
 }

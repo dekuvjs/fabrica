@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:excel/excel.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 import '../database/app_database.dart';
@@ -51,8 +50,11 @@ class ExcelReportService {
     final bytes = excel.encode();
     if (bytes == null) throw Exception('No se pudo generar el Excel');
 
-    final dir = await getApplicationDocumentsDirectory();
-    final path = p.join(dir.path, '$nombreArchivo.xlsx');
+    final exportsDir = Directory(p.join(Directory.current.path, 'exports'));
+    if (!exportsDir.existsSync()) {
+      exportsDir.createSync(recursive: true);
+    }
+    final path = p.join(exportsDir.path, '$nombreArchivo.xlsx');
     final file = File(path);
     await file.writeAsBytes(bytes);
 
@@ -77,8 +79,11 @@ class ExcelReportService {
     final bytes = excel.encode();
     if (bytes == null) throw Exception('No se pudo generar el Excel');
 
-    final dir = await getApplicationDocumentsDirectory();
-    final path = p.join(dir.path, '$nombreArchivo.xlsx');
+    final exportsDir = Directory(p.join(Directory.current.path, 'exports'));
+    if (!exportsDir.existsSync()) {
+      exportsDir.createSync(recursive: true);
+    }
+    final path = p.join(exportsDir.path, '$nombreArchivo.xlsx');
     final file = File(path);
     await file.writeAsBytes(bytes);
 

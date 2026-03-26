@@ -49,12 +49,46 @@ class Trabajos extends Table {
   RealColumn get precioTotal => real()();
 }
 
-@DriftDatabase(tables: [Productos, TiposMueble, Presupuestos, Empleados, Trabajos])
+/// Ventas registradas por tipo de mueble.
+class VentasMuebles extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get tipoMuebleId =>
+      integer().references(TiposMueble, #id, onDelete: KeyAction.restrict)();
+  IntColumn get cantidad => integer()();
+  /// Precio total de venta (por el registro completo, no unitario).
+  RealColumn get precioVenta => real().withDefault(const Constant(0))();
+  /// Costo total de fabricación basado en el presupuesto copiado de la venta.
+  RealColumn get costoTotal => real().withDefault(const Constant(0))();
+  DateTimeColumn get fecha => dateTime()();
+}
+
+/// Copia del presupuesto ligada a una venta específica (editable sin tocar el presupuesto base).
+class VentaPresupuestoLineas extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get ventaId =>
+      integer().references(VentasMuebles, #id, onDelete: KeyAction.cascade)();
+  TextColumn get nombre => text()();
+  TextColumn get descripcion => text().nullable()();
+  IntColumn get cantidad => integer().withDefault(const Constant(1))();
+  RealColumn get precioUnitario => real().withDefault(const Constant(0))();
+  RealColumn get precioTotal => real().withDefault(const Constant(0))();
+}
+
+@DriftDatabase(
+    tables: [
+      Productos,
+      TiposMueble,
+      Presupuestos,
+      Empleados,
+      Trabajos,
+      VentasMuebles,
+      VentaPresupuestoLineas,
+    ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(driftDatabase(name: 'fabrica_muebles'));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -69,6 +103,14 @@ class AppDatabase extends _$AppDatabase {
           if (from < 3) {
             await m.createTable(empleados);
             await m.createTable(trabajos);
+          }
+          if (from < 4) {
+            await m.createTable(ventasMuebles);
+          }
+          if (from < 5) {
+            await m.addColumn(ventasMuebles, ventasMuebles.precioVenta);
+            await m.addColumn(ventasMuebles, ventasMuebles.costoTotal);
+            await m.createTable(ventaPresupuestoLineas);
           }
         },
       );
@@ -148,6 +190,29 @@ class AppDatabase extends _$AppDatabase {
   Future<int> deleteTrabajo(Trabajo entry) =>
       delete(trabajos).delete(entry);
 
+  /// Trabajos en un rango [inicioIncl]..[finExcl) para todos los empleados.
+  Future<List<Trabajo>> getTrabajosPorRango(DateTime inicioIncl, DateTime finExcl) {
+    return (select(trabajos)
+          ..where((t) =>
+              t.fecha.isBiggerOrEqualValue(inicioIncl) &
+              t.fecha.isSmallerThanValue(finExcl)))
+        .get();
+  }
+
+  /// Trabajos en un rango [inicioIncl]..[finExcl) para un empleado.
+  Future<List<Trabajo>> getTrabajosPorEmpleadoYRango(
+    int empleadoId,
+    DateTime inicioIncl,
+    DateTime finExcl,
+  ) {
+    return (select(trabajos)
+          ..where((t) =>
+              t.empleadoId.equals(empleadoId) &
+              t.fecha.isBiggerOrEqualValue(inicioIncl) &
+              t.fecha.isSmallerThanValue(finExcl)))
+        .get();
+  }
+
   /// Presupuesto por tipo de mueble y nombre de línea (ej. "tapizador").
   /// Coincide por nombre ignorando mayúsculas.
   Future<Presupuesto?> getPresupuestoPorTipoYNombreLinea(
@@ -161,5 +226,109 @@ class AppDatabase extends _$AppDatabase {
     } catch (_) {
       return null;
     }
+  }
+
+  // --- Ventas de muebles (por tipo y fecha) ---
+  Stream<List<VentasMueble>> watchVentasPorFecha(DateTime fecha) {
+    final inicio = DateTime(fecha.year, fecha.month, fecha.day);
+    final fin = inicio.add(const Duration(days: 1));
+    return (select(ventasMuebles)
+          ..where((t) =>
+              t.fecha.isBiggerOrEqualValue(inicio) &
+              t.fecha.isSmallerThanValue(fin)))
+        .watch();
+  }
+
+  Future<List<VentasMueble>> getVentasPorFecha(DateTime fecha) {
+    final inicio = DateTime(fecha.year, fecha.month, fecha.day);
+    final fin = inicio.add(const Duration(days: 1));
+    return (select(ventasMuebles)
+          ..where((t) =>
+              t.fecha.isBiggerOrEqualValue(inicio) &
+              t.fecha.isSmallerThanValue(fin)))
+        .get();
+  }
+
+  Future<int> insertVentaMueble(VentasMueblesCompanion entry) =>
+      into(ventasMuebles).insert(entry);
+
+  Future<bool> updateVentaMueble(VentasMueble entry) =>
+      update(ventasMuebles).replace(entry);
+
+  Future<int> deleteVentaMueble(VentasMueble entry) =>
+      delete(ventasMuebles).delete(entry);
+
+  // --- Presupuesto copiado por venta ---
+  Stream<List<VentaPresupuestoLinea>> watchLineasPresupuestoVenta(int ventaId) {
+    return (select(ventaPresupuestoLineas)
+          ..where((t) => t.ventaId.equals(ventaId)))
+        .watch();
+  }
+
+  Future<List<VentaPresupuestoLinea>> getLineasPresupuestoVenta(int ventaId) {
+    return (select(ventaPresupuestoLineas)
+          ..where((t) => t.ventaId.equals(ventaId)))
+        .get();
+  }
+
+  Future<int> insertLineaPresupuestoVenta(VentaPresupuestoLineasCompanion entry) =>
+      into(ventaPresupuestoLineas).insert(entry);
+
+  Future<bool> updateLineaPresupuestoVenta(VentaPresupuestoLinea entry) =>
+      update(ventaPresupuestoLineas).replace(entry);
+
+  Future<int> deleteLineaPresupuestoVenta(VentaPresupuestoLinea entry) =>
+      delete(ventaPresupuestoLineas).delete(entry);
+
+  Future<double> recalcularCostoTotalVenta(int ventaId) async {
+    final lineas = await getLineasPresupuestoVenta(ventaId);
+    final total = lineas.fold<double>(0, (s, l) => s + l.precioTotal);
+    final venta = await (select(ventasMuebles)..where((v) => v.id.equals(ventaId)))
+        .getSingleOrNull();
+    if (venta != null) {
+      await updateVentaMueble(venta.copyWith(costoTotal: total));
+    }
+    return total;
+  }
+
+  /// Crea una venta y copia el presupuesto del tipo de mueble como base editable.
+  Future<int> crearVentaConCopiaPresupuesto({
+    required int tipoMuebleId,
+    required int cantidad,
+    required DateTime fecha,
+    required double precioVenta,
+  }) async {
+    final fechaDia = DateTime(fecha.year, fecha.month, fecha.day);
+    final ventaId = await into(ventasMuebles).insert(
+      VentasMueblesCompanion.insert(
+        tipoMuebleId: tipoMuebleId,
+        cantidad: cantidad,
+        fecha: fechaDia,
+        precioVenta: Value(precioVenta),
+        costoTotal: const Value(0),
+      ),
+    );
+
+    final presupuestoBase = await getPresupuestosPorTipo(tipoMuebleId);
+    if (presupuestoBase.isNotEmpty) {
+      await batch((b) {
+        for (final p in presupuestoBase) {
+          b.insert(
+            ventaPresupuestoLineas,
+            VentaPresupuestoLineasCompanion.insert(
+              ventaId: ventaId,
+              nombre: p.nombre,
+              descripcion: Value(p.descripcion),
+              cantidad: Value(p.cantidad),
+              precioUnitario: Value(p.precioUnitario),
+              precioTotal: Value(p.precioTotal),
+            ),
+          );
+        }
+      });
+    }
+
+    await recalcularCostoTotalVenta(ventaId);
+    return ventaId;
   }
 }

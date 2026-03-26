@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'empleados_screen.dart';
 import 'home_screen.dart';
 import 'tipos_muebles_screen.dart';
+import 'ventas_muebles_screen.dart';
 
 /// Pantalla contenedora con menú de pestañas para navegar entre pantallas.
 class MainShellScreen extends StatelessWidget {
@@ -11,7 +12,7 @@ class MainShellScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       initialIndex: 0,
       child: Scaffold(
         appBar: AppBar(
@@ -21,6 +22,7 @@ class MainShellScreen extends StatelessWidget {
             tabs: const [
               Tab(icon: Icon(Icons.home_outlined), text: 'Inicio'),
               Tab(icon: Icon(Icons.weekend_outlined), text: 'Tipos de muebles'),
+              Tab(icon: Icon(Icons.shopping_cart_outlined), text: 'Ventas'),
               Tab(icon: Icon(Icons.people_outlined), text: 'Empleados'),
             ],
           ),
@@ -29,6 +31,7 @@ class MainShellScreen extends StatelessWidget {
           children: [
             HomeScreen(showAppBar: false),
             TiposMueblesScreen(showAppBar: false),
+            VentasMueblesScreen(showAppBar: false),
             EmpleadosScreen(showAppBar: false),
           ],
         ),

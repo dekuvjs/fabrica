@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../database/app_database.dart';
+import '../reports/trabajos_excel_report_service.dart';
 import '../widgets/empleado_form_modal.dart';
 import '../widgets/trabajo_form_modal.dart';
 
@@ -15,6 +16,7 @@ class EmpleadosScreen extends StatefulWidget {
 
 class _EmpleadosScreenState extends State<EmpleadosScreen> {
   late final AppDatabase _db;
+  late final TrabajosExcelReportService _reportService;
   Empleado? _empleadoSeleccionado;
   DateTime _fechaSeleccionada = DateTime.now();
 
@@ -22,6 +24,7 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
   void initState() {
     super.initState();
     _db = AppDatabase();
+    _reportService = TrabajosExcelReportService();
   }
 
   @override
@@ -170,6 +173,119 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
     }
   }
 
+  Future<void> _exportarTrabajosDelDia() async {
+    if (_empleadoSeleccionado == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecciona un empleado para exportar.')),
+      );
+      return;
+    }
+    final inicio = DateTime(
+      _fechaSeleccionada.year,
+      _fechaSeleccionada.month,
+      _fechaSeleccionada.day,
+    );
+    final fin = inicio.add(const Duration(days: 1));
+    await _exportarTrabajosRango(_empleadoSeleccionado!, inicio, fin, titulo: 'día');
+  }
+
+  Future<void> _exportarTrabajosPorRangoUI() async {
+    if (_empleadoSeleccionado == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecciona un empleado para exportar.')),
+      );
+      return;
+    }
+    final range = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateRange: DateTimeRange(
+        start: DateTime(
+          _fechaSeleccionada.year,
+          _fechaSeleccionada.month,
+          _fechaSeleccionada.day,
+        ),
+        end: DateTime(
+          _fechaSeleccionada.year,
+          _fechaSeleccionada.month,
+          _fechaSeleccionada.day,
+        ),
+      ),
+    );
+    if (range == null) return;
+    final inicio = DateTime(range.start.year, range.start.month, range.start.day);
+    final finExcl = DateTime(range.end.year, range.end.month, range.end.day)
+        .add(const Duration(days: 1));
+    await _exportarTrabajosRango(_empleadoSeleccionado!, inicio, finExcl, titulo: 'rango');
+  }
+
+  Future<void> _exportarTrabajosRango(
+    Empleado empleado,
+    DateTime inicioIncl,
+    DateTime finExcl, {
+    required String titulo,
+  }) async {
+    try {
+      final trabajos = await _db.getTrabajosPorEmpleadoYRango(
+        empleado.id,
+        inicioIncl,
+        finExcl,
+      );
+      if (trabajos.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'No hay trabajos para exportar ($titulo) de ${empleado.nombre}.',
+            ),
+          ),
+        );
+        return;
+      }
+
+      final empleadosById = {empleado.id: empleado};
+
+      final presupuestosIds = trabajos.map((t) => t.presupuestoId).toSet();
+      final presupuestosById = <int, Presupuesto>{};
+      for (final id in presupuestosIds) {
+        final p = await _db.getPresupuestoById(id);
+        if (p != null) presupuestosById[id] = p;
+      }
+
+      final tipos = await _db.allTiposMueble;
+      final tiposById = {for (final t in tipos) t.id: t};
+
+      final safeEmpleado = empleado.nombre
+          .trim()
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
+          .replaceAll(RegExp(r'_+'), '_')
+          .replaceAll(RegExp(r'^_|_$'), '');
+      final nombreArchivo =
+          'trabajos_${safeEmpleado.isEmpty ? 'empleado' : safeEmpleado}_${inicioIncl.millisecondsSinceEpoch}_${finExcl.millisecondsSinceEpoch}';
+      final path = await _reportService.exportarTrabajos(
+        trabajos: trabajos,
+        empleadosById: empleadosById,
+        presupuestosById: presupuestosById,
+        tiposMuebleById: tiposById,
+        nombreArchivo: nombreArchivo,
+      );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Exportado: $path')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error exportando: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -178,6 +294,19 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
               title: const Text('Empleados'),
               backgroundColor: Theme.of(context).colorScheme.inversePrimary,
               actions: [
+                IconButton(
+                  icon: const Icon(Icons.ios_share_outlined),
+                  tooltip: 'Exportar trabajos del día',
+                  onPressed:
+                      _empleadoSeleccionado == null ? null : _exportarTrabajosDelDia,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.date_range),
+                  tooltip: 'Exportar trabajos por rango',
+                  onPressed: _empleadoSeleccionado == null
+                      ? null
+                      : _exportarTrabajosPorRangoUI,
+                ),
                 IconButton(
                   icon: const Icon(Icons.person_add),
                   tooltip: 'Agregar empleado',
@@ -215,6 +344,22 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
                             tooltip: 'Agregar empleado',
                             onPressed: _abrirModalAgregarEmpleado,
                           ),
+                        if (!widget.showAppBar) ...[
+                          IconButton(
+                            icon: const Icon(Icons.ios_share_outlined),
+                            tooltip: 'Exportar trabajos del día',
+                            onPressed: _empleadoSeleccionado == null
+                                ? null
+                                : _exportarTrabajosDelDia,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.date_range),
+                            tooltip: 'Exportar trabajos por rango',
+                            onPressed: _empleadoSeleccionado == null
+                                ? null
+                                : _exportarTrabajosPorRangoUI,
+                          ),
+                        ],
                       ],
                     ),
                   ),
