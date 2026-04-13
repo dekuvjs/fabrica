@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../database/app_database.dart';
 import '../reports/ventas_excel_report_service.dart';
+import '../utils/currency_format.dart';
 import 'venta_detalle_screen.dart';
 import '../widgets/venta_mueble_form_modal.dart';
 
@@ -346,9 +347,9 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
                                     title: Text(nombre),
                                     subtitle: Text(
                                       'Cant: ${v.cantidad} · '
-                                      'Venta: \$${v.precioVenta.toStringAsFixed(2)} · '
-                                      'Costo: \$${v.costoTotal.toStringAsFixed(2)} · '
-                                      'Utilidad: \$${utilidad.toStringAsFixed(2)}',
+                                      'Venta: ${formatCurrency(v.precioVenta)} · '
+                                      'Costo: ${formatCurrency(v.costoTotal)} · '
+                                      'Utilidad: ${formatCurrency(utilidad)}',
                                     ),
                                     trailing: IconButton(
                                       icon: const Icon(Icons.delete_outline),
@@ -382,9 +383,9 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Total ventas: \$${totalVentas.toStringAsFixed(2)} · '
-                                  'Total costos: \$${totalCostos.toStringAsFixed(2)} · '
-                                  'Utilidad: \$${(totalVentas - totalCostos).toStringAsFixed(2)}',
+                                  'Total ventas: ${formatCurrency(totalVentas)} · '
+                                  'Total costos: ${formatCurrency(totalCostos)} · '
+                                  'Utilidad: ${formatCurrency(totalVentas - totalCostos)}',
                                 ),
                               ],
                             ),

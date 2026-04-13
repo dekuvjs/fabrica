@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../database/app_database.dart';
+import '../utils/currency_format.dart';
 
 /// Modal para agregar un trabajo a un empleado.
 /// Tipo de mueble, cantidad, fecha (por defecto hoy).
@@ -79,14 +80,16 @@ class _TrabajoFormModalState extends State<TrabajoFormModal> {
       final fecha = DateTime(_fecha.year, _fecha.month, _fecha.day);
       final precioUnitario = _presupuestoEncontrado!.precioUnitario;
       final precioTotal = precioUnitario * cantidad;
-      Navigator.of(context).pop(TrabajoFormResult(
-        empleadoId: widget.empleado.id,
-        presupuestoId: _presupuestoEncontrado!.id,
-        cantidad: cantidad,
-        fecha: fecha,
-        precioUnitario: precioUnitario,
-        precioTotal: precioTotal,
-      ));
+      Navigator.of(context).pop(
+        TrabajoFormResult(
+          empleadoId: widget.empleado.id,
+          presupuestoId: _presupuestoEncontrado!.id,
+          cantidad: cantidad,
+          fecha: fecha,
+          precioUnitario: precioUnitario,
+          precioTotal: precioTotal,
+        ),
+      );
     }
   }
 
@@ -108,10 +111,7 @@ class _TrabajoFormModalState extends State<TrabajoFormModal> {
                   border: OutlineInputBorder(),
                 ),
                 items: widget.tiposMueble.map((t) {
-                  return DropdownMenuItem(
-                    value: t,
-                    child: Text(t.nombre),
-                  );
+                  return DropdownMenuItem(value: t, child: Text(t.nombre));
                 }).toList(),
                 onChanged: (v) {
                   setState(() => _tipoMuebleSeleccionado = v);
@@ -142,10 +142,10 @@ class _TrabajoFormModalState extends State<TrabajoFormModal> {
               if (_presupuestoEncontrado != null) ...[
                 const SizedBox(height: 12),
                 Text(
-                  'Precio unitario: \$${_presupuestoEncontrado!.precioUnitario.toStringAsFixed(2)}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
+                  'Precio unitario: ${formatCurrency(_presupuestoEncontrado!.precioUnitario)}',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 ),
               ],
               const SizedBox(height: 16),
@@ -192,13 +192,12 @@ class _TrabajoFormModalState extends State<TrabajoFormModal> {
                 Builder(
                   builder: (context) {
                     final cant = int.tryParse(_cantidadController.text) ?? 0;
-                    final total =
-                        _presupuestoEncontrado!.precioUnitario * cant;
+                    final total = _presupuestoEncontrado!.precioUnitario * cant;
                     return Text(
-                      'Total: \$${total.toStringAsFixed(2)}',
+                      'Total: ${formatCurrency(total)}',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     );
                   },
                 ),
@@ -213,8 +212,7 @@ class _TrabajoFormModalState extends State<TrabajoFormModal> {
           child: const Text('Cancelar'),
         ),
         FilledButton(
-          onPressed:
-              _presupuestoEncontrado != null ? _guardar : null,
+          onPressed: _presupuestoEncontrado != null ? _guardar : null,
           child: const Text('Guardar'),
         ),
       ],

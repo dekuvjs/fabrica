@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../database/app_database.dart';
 import '../reports/trabajos_excel_report_service.dart';
+import '../utils/currency_format.dart';
 import '../widgets/empleado_form_modal.dart';
 import '../widgets/trabajo_form_modal.dart';
 
@@ -647,8 +648,8 @@ class _TrabajosPanel extends StatelessWidget {
                                   title: Text(nombreTipo),
                                   subtitle: Text(
                                     'Cantidad: ${t.cantidad} · '
-                                    'P. unit: \$${t.precioUnitario.toStringAsFixed(2)} · '
-                                    'Total: \$${t.precioTotal.toStringAsFixed(2)}',
+                                    'P. unit: ${formatCurrency(t.precioUnitario)} · '
+                                    'Total: ${formatCurrency(t.precioTotal)}',
                                   ),
                                   trailing: IconButton(
                                     icon: const Icon(Icons.delete_outline),
@@ -663,7 +664,7 @@ class _TrabajosPanel extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(12),
                           child: Text(
-                            'Total del día: \$${total.toStringAsFixed(2)}',
+                            'Total del día: ${formatCurrency(total)}',
                             style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../database/app_database.dart';
 import '../reports/excel_report_service.dart';
+import '../utils/currency_format.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.showAppBar = true});
@@ -16,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late final AppDatabase _db;
   late final ExcelReportService _excelService;
+  bool _ejecutandoSeeders = false;
 
   @override
   void initState() {
@@ -31,12 +33,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _agregarProductoEjemplo() async {
-    await _db.insertProducto(ProductosCompanion.insert(
-      nombre: 'Mesa de madera',
-      descripcion: const Value('Mesa de roble 1.20m'),
-      precio: const Value(250.0),
-      stock: const Value(10),
-    ));
+    await _db.insertProducto(
+      ProductosCompanion.insert(
+        nombre: 'Mesa de madera',
+        descripcion: const Value('Mesa de roble 1.20m'),
+        precio: const Value(250.0),
+        stock: const Value(10),
+      ),
+    );
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Producto de ejemplo agregado')),
@@ -49,18 +53,19 @@ class _HomeScreenState extends State<HomeScreen> {
       final productos = await _db.allProductos;
       final path = await _excelService.generarReporteProductos(
         productos,
-        nombreArchivo: 'reporte_productos_${DateTime.now().millisecondsSinceEpoch}',
+        nombreArchivo:
+            'reporte_productos_${DateTime.now().millisecondsSinceEpoch}',
       );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Reporte guardado en: $path')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Reporte guardado en: $path')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     }
   }
@@ -71,15 +76,37 @@ class _HomeScreenState extends State<HomeScreen> {
         nombreArchivo: 'plantilla_${DateTime.now().millisecondsSinceEpoch}',
       );
       if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Plantilla guardada en: $path')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+    }
+  }
+
+  Future<void> _ejecutarSeeders() async {
+    setState(() => _ejecutandoSeeders = true);
+    try {
+      await _db.ejecutarSeedersBase();
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Plantilla guardada en: $path')),
+          const SnackBar(content: Text('Seeders ejecutados correctamente')),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error ejecutando seeders: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _ejecutandoSeeders = false);
       }
     }
   }
@@ -98,7 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 12,
               children: [
                 FilledButton.icon(
                   onPressed: _agregarProductoEjemplo,
@@ -116,6 +145,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: _generarPlantillaExcel,
                   icon: const Icon(Icons.description),
                   label: const Text('Plantilla Excel'),
+                ),
+                FilledButton.tonalIcon(
+                  onPressed: _ejecutandoSeeders ? null : _ejecutarSeeders,
+                  icon: _ejecutandoSeeders
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.playlist_add_check_circle_outlined),
+                  label: Text(
+                    _ejecutandoSeeders
+                        ? 'Ejecutando seeders...'
+                        : 'Correr seeders',
+                  ),
                 ),
               ],
             ),
@@ -150,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ListTile(
                         title: Text(p.nombre),
                         subtitle: Text(
-                          'Precio: \$${p.precio.toStringAsFixed(2)} · Stock: ${p.stock}',
+                          'Precio: ${formatCurrency(p.precio)} · Stock: ${p.stock}',
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete_outline),

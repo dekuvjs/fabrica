@@ -31,13 +31,13 @@ class Presupuestos extends Table {
   RealColumn get precioTotal => real().withDefault(const Constant(0))();
 }
 
-/// Tipos de empleado: cajonero, tapicero, costurero.
-/// El nombre del presupuesto (ej. "tapicero") debe coincidir con el tipo para asignar precio.
+/// Tipos de empleado: cajonero, tapizero, costurero.
+/// El nombre del presupuesto (ej. "tapizero") debe coincidir con el tipo para asignar precio.
 class Empleados extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get nombre => text()();
   TextColumn get tipoEmpleado =>
-      text()(); // 'cajonero', 'tapicero', 'costurero'
+      text()(); // 'cajonero', 'tapizero', 'costurero'
 }
 
 /// Trabajo realizado por un empleado en una fecha: tipo de mueble (vía presupuesto), cantidad, precio.
@@ -94,13 +94,14 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(driftDatabase(name: 'fabrica_muebles'));
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (Migrator m) async {
       await m.createAll();
       await seedEmpleadosBase();
+      await seedTiposMuebleBase();
     },
     onUpgrade: (Migrator m, int from, int to) async {
       if (from < 2) {
@@ -123,27 +124,163 @@ class AppDatabase extends _$AppDatabase {
         await _migrarTiposEmpleado();
         await seedEmpleadosBase();
       }
+      if (from < 7) {
+        await seedTiposMuebleBase();
+      }
+      if (from < 8) {
+        await _migrarTiposEmpleado();
+      }
     },
   );
 
   static const List<({String nombre, String tipo})> _empleadosSeed = [
-    (nombre: 'STERLING', tipo: 'tapicero'),
-    (nombre: 'FREDDY', tipo: 'tapicero'),
-    (nombre: 'ADAN', tipo: 'tapicero'),
-    (nombre: 'JORGE', tipo: 'tapicero'),
-    (nombre: 'JORDANY', tipo: 'tapicero'),
-    (nombre: 'LEONEL', tipo: 'tapicero'),
-    (nombre: 'VICTOR JOSE', tipo: 'tapicero'),
+    (nombre: 'STERLING', tipo: 'tapizero'),
+    (nombre: 'FREDDY', tipo: 'tapizero'),
+    (nombre: 'ADAN', tipo: 'tapizero'),
+    (nombre: 'JORGE', tipo: 'tapizero'),
+    (nombre: 'JORDANY', tipo: 'tapizero'),
+    (nombre: 'LEONEL', tipo: 'tapizero'),
+    (nombre: 'VICTOR JOSE', tipo: 'tapizero'),
     (nombre: 'ANABEL', tipo: 'costurero'),
     (nombre: 'YENDRY', tipo: 'costurero'),
     (nombre: 'PAPITO', tipo: 'cajonero'),
+  ];
+
+  static const String _tipoMuebleJosias = 'Juego L 3 Piezas Josias';
+
+  static const List<
+    ({String nombre, double precioUnitario, int cantidad, String descripcion})
+  >
+  _presupuestosJuegoLJosiasSeed = [
+    (
+      nombre: 'Madera Pino',
+      precioUnitario: 45,
+      cantidad: 30,
+      descripcion: '5 Pies',
+    ),
+    (
+      nombre: 'Playwood',
+      precioUnitario: 150,
+      cantidad: 1,
+      descripcion: '5 Pesados de 31x31',
+    ),
+    (
+      nombre: 'Grapas de 2',
+      precioUnitario: 100,
+      cantidad: 1,
+      descripcion: 'Caja 1600 16 juegos',
+    ),
+    (
+      nombre: 'Plancha de G',
+      precioUnitario: 2700,
+      cantidad: 1,
+      descripcion: 'Goma de 6',
+    ),
+    (
+      nombre: 'Goma 1/2',
+      precioUnitario: 100,
+      cantidad: 4,
+      descripcion: 'Goma de 1/2',
+    ),
+    (
+      nombre: 'Goma 2',
+      precioUnitario: 200,
+      cantidad: 2,
+      descripcion: 'Goma de 2',
+    ),
+    (
+      nombre: 'Goma 1',
+      precioUnitario: 200,
+      cantidad: 2,
+      descripcion: 'Goma de 1',
+    ),
+    (nombre: 'DACRON', precioUnitario: 120, cantidad: 4, descripcion: 'Dacron'),
+    (
+      nombre: 'Pelo de ANG',
+      precioUnitario: 180,
+      cantidad: 5,
+      descripcion: 'Libras',
+    ),
+    (nombre: 'Tela', precioUnitario: 108, cantidad: 22, descripcion: 'Yardas'),
+    (
+      nombre: 'Tornillo',
+      precioUnitario: 1,
+      cantidad: 15,
+      descripcion: '2 Para armar Brazo y Cuerpo',
+    ),
+    (
+      nombre: 'Pelon',
+      precioUnitario: 25,
+      cantidad: 3,
+      descripcion: '21/2 Yarda de ellon',
+    ),
+    (
+      nombre: 'Cemento',
+      precioUnitario: 60,
+      cantidad: 1,
+      descripcion: 'Para pegar Colcha',
+    ),
+    (
+      nombre: 'Carton Caja',
+      precioUnitario: 15,
+      cantidad: 5,
+      descripcion: '2 cajas de Carton',
+    ),
+    (
+      nombre: 'Bareta',
+      precioUnitario: 17,
+      cantidad: 4,
+      descripcion: '4 para contra mueble y Butaca',
+    ),
+    (
+      nombre: 'Patas',
+      precioUnitario: 125,
+      cantidad: 8,
+      descripcion: '12 Para But, mesa y sofa',
+    ),
+    (
+      nombre: 'Plastico',
+      precioUnitario: 97,
+      cantidad: 1,
+      descripcion: 'Emboltura Muebles',
+    ),
+    (
+      nombre: 'Grapas 7.10',
+      precioUnitario: 0.5,
+      cantidad: 100,
+      descripcion: 'Media Caja Tapizado de Mueble',
+    ),
+    (
+      nombre: 'Cajonero',
+      precioUnitario: 1000,
+      cantidad: 1,
+      descripcion: 'Fabricacion Cajon',
+    ),
+    (
+      nombre: 'Costurero',
+      precioUnitario: 600,
+      cantidad: 1,
+      descripcion: 'Corte, Costura de Cojines',
+    ),
+    (
+      nombre: 'Tapizero',
+      precioUnitario: 1,
+      cantidad: 1,
+      descripcion: 'Tapizeria de Muebles',
+    ),
+    (
+      nombre: 'Maestria',
+      precioUnitario: 400,
+      cantidad: 1,
+      descripcion: 'Maestria',
+    ),
   ];
 
   Future<void> _migrarTiposEmpleado() async {
     await customStatement("""
       UPDATE empleados
       SET tipo_empleado = CASE
-        WHEN LOWER(TRIM(tipo_empleado)) IN ('tapizador', 'tapicero', 'tapiceros', 'tapizadora') THEN 'tapicero'
+        WHEN LOWER(TRIM(tipo_empleado)) IN ('tapizador', 'tapicero', 'tapiceros', 'tapizadora', 'tapizera', 'tapizero') THEN 'tapizero'
         WHEN LOWER(TRIM(tipo_empleado)) IN ('costurero', 'costurera', 'costureros', 'costureras', 'cortador') THEN 'costurero'
         WHEN LOWER(TRIM(tipo_empleado)) IN ('cajonero', 'cajoneros', 'fijo', 'ensamblador') THEN 'cajonero'
         ELSE 'cajonero'
@@ -176,6 +313,56 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  Future<void> seedTiposMuebleBase() async {
+    await transaction(() async {
+      final tiposExistentes = await allTiposMueble;
+      final tipoExistente = tiposExistentes.where((tipo) {
+        return _normalizarTexto(tipo.nombre) ==
+            _normalizarTexto(_tipoMuebleJosias);
+      }).firstOrNull;
+
+      final tipoMuebleId =
+          tipoExistente?.id ??
+          await into(
+            tiposMueble,
+          ).insert(TiposMuebleCompanion.insert(nombre: _tipoMuebleJosias));
+
+      final presupuestosExistentes = await getPresupuestosPorTipo(tipoMuebleId);
+      final nombresExistentes = presupuestosExistentes
+          .map((presupuesto) => _normalizarTexto(presupuesto.nombre))
+          .toSet();
+
+      final faltantes = _presupuestosJuegoLJosiasSeed.where((linea) {
+        return !nombresExistentes.contains(_normalizarTexto(linea.nombre));
+      }).toList();
+
+      if (faltantes.isEmpty) return;
+
+      await batch((b) {
+        for (final linea in faltantes) {
+          b.insert(
+            presupuestos,
+            PresupuestosCompanion.insert(
+              tipoMuebleId: tipoMuebleId,
+              nombre: linea.nombre,
+              descripcion: Value(linea.descripcion),
+              cantidad: Value(linea.cantidad),
+              precioUnitario: Value(linea.precioUnitario),
+              precioTotal: Value(linea.precioUnitario * linea.cantidad),
+            ),
+          );
+        }
+      });
+    });
+  }
+
+  String _normalizarTexto(String valor) => valor.trim().toLowerCase();
+
+  Future<void> ejecutarSeedersBase() async {
+    await seedEmpleadosBase();
+    await seedTiposMuebleBase();
+  }
+
   Future<void> resetDatabase() async {
     await customStatement('PRAGMA foreign_keys = OFF');
     try {
@@ -187,7 +374,7 @@ class AppDatabase extends _$AppDatabase {
     }
 
     await createMigrator().createAll();
-    await seedEmpleadosBase();
+    await ejecutarSeedersBase();
   }
 
   // --- Productos (ejemplo) ---
@@ -301,7 +488,7 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
-  /// Presupuesto por tipo de mueble y nombre de línea (ej. "tapizador").
+  /// Presupuesto por tipo de mueble y nombre de línea (ej. "tapizero").
   /// Coincide por nombre ignorando mayúsculas.
   Future<Presupuesto?> getPresupuestoPorTipoYNombreLinea(
     int tipoMuebleId,

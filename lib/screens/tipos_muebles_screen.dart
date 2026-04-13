@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 
 import '../database/app_database.dart';
+import '../utils/currency_format.dart';
 import '../widgets/presupuesto_form_modal.dart';
 import '../widgets/tipo_mueble_form_modal.dart';
 
@@ -33,7 +34,8 @@ class _TiposMueblesScreenState extends State<TiposMueblesScreen> {
   Future<void> _abrirModalAgregarTipo() async {
     final nombre = await showDialog<String>(
       context: context,
-      builder: (_) => const TipoMuebleFormModal(titulo: 'Agregar tipo de mueble'),
+      builder: (_) =>
+          const TipoMuebleFormModal(titulo: 'Agregar tipo de mueble'),
     );
     if (nombre != null && mounted) {
       await _db.insertTipoMueble(TiposMuebleCompanion.insert(nombre: nombre));
@@ -102,18 +104,20 @@ class _TiposMueblesScreenState extends State<TiposMueblesScreen> {
       builder: (_) => const PresupuestoFormModal(titulo: 'Agregar presupuesto'),
     );
     if (result != null && mounted) {
-      await _db.insertPresupuesto(PresupuestosCompanion.insert(
-        tipoMuebleId: _tipoSeleccionado!.id,
-        nombre: result.nombre,
-        descripcion: Value(result.descripcion),
-        cantidad: Value(result.cantidad),
-        precioUnitario: Value(result.precioUnitario),
-        precioTotal: Value(result.precioTotal),
-      ));
+      await _db.insertPresupuesto(
+        PresupuestosCompanion.insert(
+          tipoMuebleId: _tipoSeleccionado!.id,
+          nombre: result.nombre,
+          descripcion: Value(result.descripcion),
+          cantidad: Value(result.cantidad),
+          precioUnitario: Value(result.precioUnitario),
+          precioTotal: Value(result.precioTotal),
+        ),
+      );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Presupuesto agregado')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Presupuesto agregado')));
       }
     }
   }
@@ -130,13 +134,15 @@ class _TiposMueblesScreenState extends State<TiposMueblesScreen> {
       ),
     );
     if (result != null && mounted) {
-      await _db.updatePresupuesto(p.copyWith(
-        nombre: result.nombre,
-        descripcion: Value(result.descripcion),
-        cantidad: result.cantidad,
-        precioUnitario: result.precioUnitario,
-        precioTotal: result.precioTotal,
-      ));
+      await _db.updatePresupuesto(
+        p.copyWith(
+          nombre: result.nombre,
+          descripcion: Value(result.descripcion),
+          cantidad: result.cantidad,
+          precioUnitario: result.precioUnitario,
+          precioTotal: result.precioTotal,
+        ),
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Presupuesto actualizado')),
@@ -167,9 +173,9 @@ class _TiposMueblesScreenState extends State<TiposMueblesScreen> {
     if (ok == true && mounted) {
       await _db.deletePresupuesto(p);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Presupuesto eliminado')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Presupuesto eliminado')));
       }
     }
   }
@@ -208,9 +214,8 @@ class _TiposMueblesScreenState extends State<TiposMueblesScreen> {
                         Expanded(
                           child: Text(
                             'Tipos de mueble',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
                         if (!widget.showAppBar)
@@ -248,7 +253,9 @@ class _TiposMueblesScreenState extends State<TiposMueblesScreen> {
                                   Icon(
                                     Icons.weekend_outlined,
                                     size: 48,
-                                    color: Theme.of(context).colorScheme.outline,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
                                   ),
                                   const SizedBox(height: 12),
                                   const Text(
@@ -288,7 +295,8 @@ class _TiposMueblesScreenState extends State<TiposMueblesScreen> {
                                   ),
                                 ],
                               ),
-                              onTap: () => setState(() => _tipoSeleccionado = t),
+                              onTap: () =>
+                                  setState(() => _tipoSeleccionado = t),
                             );
                           },
                         );
@@ -368,8 +376,8 @@ class _PresupuestoPanel extends StatelessWidget {
                   child: Text(
                     'Presupuesto: ${tipo.nombre}',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 FilledButton.icon(
@@ -413,7 +421,10 @@ class _PresupuestoPanel extends StatelessWidget {
                     ),
                   );
                 }
-                final total = items.fold<double>(0, (s, p) => s + p.precioTotal);
+                final total = items.fold<double>(
+                  0,
+                  (s, p) => s + p.precioTotal,
+                );
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -425,8 +436,14 @@ class _PresupuestoPanel extends StatelessWidget {
                             columns: const [
                               DataColumn(label: Text('Nombre')),
                               DataColumn(label: Text('Descripción')),
-                              DataColumn(label: Text('Cantidad'), numeric: true),
-                              DataColumn(label: Text('P. unitario'), numeric: true),
+                              DataColumn(
+                                label: Text('Cantidad'),
+                                numeric: true,
+                              ),
+                              DataColumn(
+                                label: Text('P. unitario'),
+                                numeric: true,
+                              ),
                               DataColumn(label: Text('Total'), numeric: true),
                               DataColumn(label: Text('')),
                             ],
@@ -434,33 +451,39 @@ class _PresupuestoPanel extends StatelessWidget {
                               return DataRow(
                                 cells: [
                                   DataCell(Text(p.nombre)),
-                                  DataCell(ConstrainedBox(
-                                    constraints: const BoxConstraints(maxWidth: 200),
-                                    child: Text(
-                                      p.descripcion ?? '—',
-                                      overflow: TextOverflow.ellipsis,
+                                  DataCell(
+                                    ConstrainedBox(
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 200,
+                                      ),
+                                      child: Text(
+                                        p.descripcion ?? '—',
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                  )),
+                                  ),
                                   DataCell(Text('${p.cantidad}')),
-                                  DataCell(Text(
-                                    '\$${p.precioUnitario.toStringAsFixed(2)}',
-                                  )),
-                                  DataCell(Text(
-                                    '\$${p.precioTotal.toStringAsFixed(2)}',
-                                  )),
-                                  DataCell(Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.edit_outlined),
-                                        onPressed: () => onEditar(p),
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.delete_outline),
-                                        onPressed: () => onEliminar(p),
-                                      ),
-                                    ],
-                                  )),
+                                  DataCell(
+                                    Text(formatCurrency(p.precioUnitario)),
+                                  ),
+                                  DataCell(Text(formatCurrency(p.precioTotal))),
+                                  DataCell(
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.edit_outlined),
+                                          onPressed: () => onEditar(p),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.delete_outline,
+                                          ),
+                                          onPressed: () => onEliminar(p),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               );
                             }).toList(),
@@ -472,10 +495,9 @@ class _PresupuestoPanel extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(12),
                       child: Text(
-                        'Total presupuesto: \$${total.toStringAsFixed(2)}',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        'Total presupuesto: ${formatCurrency(total)}',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],

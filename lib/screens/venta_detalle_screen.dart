@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 
 import '../database/app_database.dart';
+import '../utils/currency_format.dart';
 import '../widgets/presupuesto_form_modal.dart';
 
 class VentaDetalleScreen extends StatefulWidget {
@@ -37,7 +38,9 @@ class _VentaDetalleScreenState extends State<VentaDetalleScreen> {
 
   Future<void> _editarPrecioVenta() async {
     final controller = TextEditingController(
-      text: _venta.precioVenta == 0 ? '' : _venta.precioVenta.toStringAsFixed(2),
+      text: _venta.precioVenta == 0
+          ? ''
+          : _venta.precioVenta.toStringAsFixed(2),
     );
     final formKey = GlobalKey<FormState>();
 
@@ -195,16 +198,13 @@ class _VentaDetalleScreenState extends State<VentaDetalleScreen> {
                   _ChipInfo(label: 'Cantidad', value: '${_venta.cantidad}'),
                   _ChipInfo(
                     label: 'Precio venta',
-                    value: '\$${_venta.precioVenta.toStringAsFixed(2)}',
+                    value: formatCurrency(_venta.precioVenta),
                   ),
                   _ChipInfo(
                     label: 'Costo',
-                    value: '\$${_venta.costoTotal.toStringAsFixed(2)}',
+                    value: formatCurrency(_venta.costoTotal),
                   ),
-                  _ChipInfo(
-                    label: 'Utilidad',
-                    value: '\$${utilidad.toStringAsFixed(2)}',
-                  ),
+                  _ChipInfo(label: 'Utilidad', value: formatCurrency(utilidad)),
                 ],
               ),
             ),
@@ -247,8 +247,8 @@ class _VentaDetalleScreenState extends State<VentaDetalleScreen> {
                         child: ListTile(
                           title: Text(l.nombre),
                           subtitle: Text(
-                            'Cant: ${l.cantidad} · P. unit: \$${l.precioUnitario.toStringAsFixed(2)} · '
-                            'Total: \$${l.precioTotal.toStringAsFixed(2)}',
+                            'Cant: ${l.cantidad} · P. unit: ${formatCurrency(l.precioUnitario)} · '
+                            'Total: ${formatCurrency(l.precioTotal)}',
                           ),
                           onTap: () => _editarLinea(l),
                           trailing: IconButton(
@@ -283,4 +283,3 @@ class _ChipInfo extends StatelessWidget {
     );
   }
 }
-

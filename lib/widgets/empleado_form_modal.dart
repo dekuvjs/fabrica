@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Tipos de empleado permitidos.
-const List<String> kTiposEmpleado = ['cajonero', 'tapicero', 'costurero'];
+const List<String> kTiposEmpleado = ['cajonero', 'tapizero', 'costurero'];
 
 /// Modal para agregar o editar un empleado (nombre y tipo de empleado).
 class EmpleadoFormModal extends StatefulWidget {
