@@ -39,14 +39,16 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
       builder: (_) => const EmpleadoFormModal(titulo: 'Agregar empleado'),
     );
     if (result != null && mounted) {
-      await _db.insertEmpleado(EmpleadosCompanion.insert(
-        nombre: result.nombre,
-        tipoEmpleado: result.tipoEmpleado,
-      ));
+      await _db.insertEmpleado(
+        EmpleadosCompanion.insert(
+          nombre: result.nombre,
+          tipoEmpleado: result.tipoEmpleado,
+        ),
+      );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Empleado agregado')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Empleado agregado')));
       }
     }
   }
@@ -61,14 +63,13 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
       ),
     );
     if (result != null && mounted) {
-      await _db.updateEmpleado(emp.copyWith(
-        nombre: result.nombre,
-        tipoEmpleado: result.tipoEmpleado,
-      ));
+      await _db.updateEmpleado(
+        emp.copyWith(nombre: result.nombre, tipoEmpleado: result.tipoEmpleado),
+      );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Empleado actualizado')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Empleado actualizado')));
       }
     }
   }
@@ -98,9 +99,9 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
       await _db.deleteEmpleado(emp);
       if (mounted) {
         setState(() => _empleadoSeleccionado = null);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Empleado eliminado')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Empleado eliminado')));
       }
     }
   }
@@ -112,8 +113,10 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text(
-                  'No hay tipos de mueble. Agrega tipos de mueble y presupuestos primero.')),
+            content: Text(
+              'No hay tipos de mueble. Agrega tipos de mueble y presupuestos primero.',
+            ),
+          ),
         );
       }
       return;
@@ -128,18 +131,20 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
       ),
     );
     if (result != null && mounted) {
-      await _db.insertTrabajo(TrabajosCompanion.insert(
-        empleadoId: result.empleadoId,
-        presupuestoId: result.presupuestoId,
-        cantidad: result.cantidad,
-        fecha: result.fecha,
-        precioUnitario: result.precioUnitario,
-        precioTotal: result.precioTotal,
-      ));
+      await _db.insertTrabajo(
+        TrabajosCompanion.insert(
+          empleadoId: result.empleadoId,
+          presupuestoId: result.presupuestoId,
+          cantidad: result.cantidad,
+          fecha: result.fecha,
+          precioUnitario: result.precioUnitario,
+          precioTotal: result.precioTotal,
+        ),
+      );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Trabajo agregado')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Trabajo agregado')));
       }
     }
   }
@@ -166,9 +171,9 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
     if (ok == true && mounted) {
       await _db.deleteTrabajo(t);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Trabajo eliminado')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Trabajo eliminado')));
       }
     }
   }
@@ -187,7 +192,12 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
       _fechaSeleccionada.day,
     );
     final fin = inicio.add(const Duration(days: 1));
-    await _exportarTrabajosRango(_empleadoSeleccionado!, inicio, fin, titulo: 'día');
+    await _exportarTrabajosRango(
+      _empleadoSeleccionado!,
+      inicio,
+      fin,
+      titulo: 'día',
+    );
   }
 
   Future<void> _exportarTrabajosPorRangoUI() async {
@@ -216,10 +226,22 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
       ),
     );
     if (range == null) return;
-    final inicio = DateTime(range.start.year, range.start.month, range.start.day);
-    final finExcl = DateTime(range.end.year, range.end.month, range.end.day)
-        .add(const Duration(days: 1));
-    await _exportarTrabajosRango(_empleadoSeleccionado!, inicio, finExcl, titulo: 'rango');
+    final inicio = DateTime(
+      range.start.year,
+      range.start.month,
+      range.start.day,
+    );
+    final finExcl = DateTime(
+      range.end.year,
+      range.end.month,
+      range.end.day,
+    ).add(const Duration(days: 1));
+    await _exportarTrabajosRango(
+      _empleadoSeleccionado!,
+      inicio,
+      finExcl,
+      titulo: 'rango',
+    );
   }
 
   Future<void> _exportarTrabajosRango(
@@ -275,14 +297,14 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Exportado: $path')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Exportado: $path')));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error exportando: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error exportando: $e')));
     }
   }
 
@@ -297,8 +319,9 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
                 IconButton(
                   icon: const Icon(Icons.ios_share_outlined),
                   tooltip: 'Exportar trabajos del día',
-                  onPressed:
-                      _empleadoSeleccionado == null ? null : _exportarTrabajosDelDia,
+                  onPressed: _empleadoSeleccionado == null
+                      ? null
+                      : _exportarTrabajosDelDia,
                 ),
                 IconButton(
                   icon: const Icon(Icons.date_range),
@@ -332,10 +355,8 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
                         Expanded(
                           child: Text(
                             'Empleados',
-                            style:
-                                Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
                         if (!widget.showAppBar)
@@ -370,11 +391,13 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                            child: Text('Error: ${snapshot.error}'),
+                          );
                         }
                         if (!snapshot.hasData) {
                           return const Center(
-                              child: CircularProgressIndicator());
+                            child: CircularProgressIndicator(),
+                          );
                         }
                         final empleados = snapshot.data!;
                         if (empleados.isEmpty) {
@@ -387,8 +410,9 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
                                   Icon(
                                     Icons.people_outline,
                                     size: 48,
-                                    color:
-                                        Theme.of(context).colorScheme.outline,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
                                   ),
                                   const SizedBox(height: 12),
                                   const Text(
@@ -405,8 +429,7 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
                           itemCount: empleados.length,
                           itemBuilder: (context, i) {
                             final e = empleados[i];
-                            final selected =
-                                _empleadoSeleccionado?.id == e.id;
+                            final selected = _empleadoSeleccionado?.id == e.id;
                             return ListTile(
                               selected: selected,
                               selectedTileColor: Theme.of(context)
@@ -419,9 +442,9 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
                                     e.tipoEmpleado.substring(1),
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                               trailing: Row(
@@ -524,10 +547,9 @@ class _TrabajosPanel extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Trabajos - ${empleado.nombre}',
-                    style:
-                        Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 FilledButton.icon(
@@ -554,8 +576,7 @@ class _TrabajosPanel extends StatelessWidget {
                       context: context,
                       initialDate: fechaSeleccionada,
                       firstDate: DateTime(2020),
-                      lastDate: DateTime.now()
-                          .add(const Duration(days: 365)),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
                     );
                     if (picked != null) onFechaChanged(picked);
                   },
@@ -569,7 +590,9 @@ class _TrabajosPanel extends StatelessWidget {
           Expanded(
             child: StreamBuilder<List<Trabajo>>(
               stream: db.watchTrabajosPorEmpleadoYFecha(
-                  empleado.id, fechaSeleccionada),
+                empleado.id,
+                fechaSeleccionada,
+              ),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
@@ -589,9 +612,7 @@ class _TrabajosPanel extends StatelessWidget {
                           color: Theme.of(context).colorScheme.outline,
                         ),
                         const SizedBox(height: 12),
-                        const Text(
-                          'No hay trabajos registrados en este día.',
-                        ),
+                        const Text('No hay trabajos registrados en este día.'),
                         const SizedBox(height: 8),
                         FilledButton.tonal(
                           onPressed: onAgregarTrabajo,
@@ -606,7 +627,9 @@ class _TrabajosPanel extends StatelessWidget {
                   builder: (context, namesSnapshot) {
                     final nombres = namesSnapshot.data ?? {};
                     final total = trabajos.fold<double>(
-                        0, (s, t) => s + t.precioTotal);
+                      0,
+                      (s, t) => s + t.precioTotal,
+                    );
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -619,8 +642,7 @@ class _TrabajosPanel extends StatelessWidget {
                               final nombreTipo =
                                   nombres[t.presupuestoId] ?? '—';
                               return Card(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 4),
+                                margin: const EdgeInsets.symmetric(vertical: 4),
                                 child: ListTile(
                                   title: Text(nombreTipo),
                                   subtitle: Text(
@@ -629,10 +651,8 @@ class _TrabajosPanel extends StatelessWidget {
                                     'Total: \$${t.precioTotal.toStringAsFixed(2)}',
                                   ),
                                   trailing: IconButton(
-                                    icon: const Icon(
-                                        Icons.delete_outline),
-                                    onPressed: () =>
-                                        onEliminarTrabajo(t),
+                                    icon: const Icon(Icons.delete_outline),
+                                    onPressed: () => onEliminarTrabajo(t),
                                   ),
                                 ),
                               );
@@ -644,12 +664,8 @@ class _TrabajosPanel extends StatelessWidget {
                           padding: const EdgeInsets.all(12),
                           child: Text(
                             'Total del día: \$${total.toStringAsFixed(2)}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -665,17 +681,20 @@ class _TrabajosPanel extends StatelessWidget {
   }
 
   Future<Map<int, String>> _nombresTipoMueble(
-      AppDatabase db, List<Trabajo> trabajos) async {
-    final presupuestoIds =
-        trabajos.map((t) => t.presupuestoId).toSet().toList();
+    AppDatabase db,
+    List<Trabajo> trabajos,
+  ) async {
+    final presupuestoIds = trabajos
+        .map((t) => t.presupuestoId)
+        .toSet()
+        .toList();
     final Map<int, String> result = {};
     final tipos = await db.allTiposMueble;
     for (final id in presupuestoIds) {
       final p = await db.getPresupuestoById(id);
       if (p != null) {
         try {
-          final tipo = tipos.firstWhere(
-              (t) => t.id == p.tipoMuebleId);
+          final tipo = tipos.firstWhere((t) => t.id == p.tipoMuebleId);
           result[id] = tipo.nombre;
         } catch (_) {}
       }

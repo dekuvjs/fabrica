@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../database/app_database.dart';
+import '../reports/ventas_excel_report_service.dart';
 import 'venta_detalle_screen.dart';
 import '../widgets/venta_mueble_form_modal.dart';
 
@@ -15,12 +16,14 @@ class VentasMueblesScreen extends StatefulWidget {
 
 class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
   late final AppDatabase _db;
+  late final VentasExcelReportService _reportService;
   DateTime _fechaSeleccionada = DateTime.now();
 
   @override
   void initState() {
     super.initState();
     _db = AppDatabase();
+    _reportService = VentasExcelReportService();
   }
 
   @override
@@ -61,9 +64,9 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
     );
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Venta registrada')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Venta registrada')));
   }
 
   Future<void> _confirmarBorrarVenta(VentasMueble v) async {
@@ -88,9 +91,90 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
     if (ok == true && mounted) {
       await _db.deleteVentaMueble(v);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Venta eliminada')),
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Venta eliminada')));
+    }
+  }
+
+  Future<void> _exportarVentasDelDia() async {
+    final inicio = DateTime(
+      _fechaSeleccionada.year,
+      _fechaSeleccionada.month,
+      _fechaSeleccionada.day,
+    );
+    final fin = inicio.add(const Duration(days: 1));
+    await _exportarVentasRango(inicio, fin, titulo: 'día');
+  }
+
+  Future<void> _exportarVentasPorRangoUI() async {
+    final range = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateRange: DateTimeRange(
+        start: DateTime(
+          _fechaSeleccionada.year,
+          _fechaSeleccionada.month,
+          _fechaSeleccionada.day,
+        ),
+        end: DateTime(
+          _fechaSeleccionada.year,
+          _fechaSeleccionada.month,
+          _fechaSeleccionada.day,
+        ),
+      ),
+    );
+    if (range == null) return;
+
+    final inicio = DateTime(
+      range.start.year,
+      range.start.month,
+      range.start.day,
+    );
+    final finExcl = DateTime(
+      range.end.year,
+      range.end.month,
+      range.end.day,
+    ).add(const Duration(days: 1));
+    await _exportarVentasRango(inicio, finExcl, titulo: 'rango');
+  }
+
+  Future<void> _exportarVentasRango(
+    DateTime inicioIncl,
+    DateTime finExcl, {
+    required String titulo,
+  }) async {
+    try {
+      final ventas = await _db.getVentasPorRango(inicioIncl, finExcl);
+      if (ventas.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No hay ventas para exportar ($titulo).')),
+        );
+        return;
+      }
+
+      final tipos = await _db.allTiposMueble;
+      final tiposById = {for (final t in tipos) t.id: t};
+      final nombreArchivo =
+          'ventas_${inicioIncl.millisecondsSinceEpoch}_${finExcl.millisecondsSinceEpoch}';
+
+      final path = await _reportService.exportarVentas(
+        ventas: ventas,
+        tiposMuebleById: tiposById,
+        nombreArchivo: nombreArchivo,
       );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Exportado: $path')));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error exportando: $e')));
     }
   }
 
@@ -101,6 +185,16 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
             title: const Text('Ventas de muebles'),
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             actions: [
+              IconButton(
+                icon: const Icon(Icons.ios_share_outlined),
+                tooltip: 'Exportar ventas del día',
+                onPressed: _exportarVentasDelDia,
+              ),
+              IconButton(
+                icon: const Icon(Icons.date_range),
+                tooltip: 'Exportar ventas por rango',
+                onPressed: _exportarVentasPorRangoUI,
+              ),
               IconButton(
                 icon: const Icon(Icons.add),
                 tooltip: 'Agregar venta',
@@ -125,8 +219,8 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
                     child: Text(
                       'Ventas del día',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   if (!widget.showAppBar)
@@ -135,6 +229,19 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
                       icon: const Icon(Icons.add),
                       label: const Text('Agregar venta'),
                     ),
+                  if (!widget.showAppBar) ...[
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.ios_share_outlined),
+                      tooltip: 'Exportar ventas del día',
+                      onPressed: _exportarVentasDelDia,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.date_range),
+                      tooltip: 'Exportar ventas por rango',
+                      onPressed: _exportarVentasPorRangoUI,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -203,10 +310,13 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
                   return FutureBuilder<List<TiposMuebleData>>(
                     future: _db.allTiposMueble,
                     builder: (context, tiposSnapshot) {
-                      final tipos = tiposSnapshot.data ?? const <TiposMuebleData>[];
+                      final tipos =
+                          tiposSnapshot.data ?? const <TiposMuebleData>[];
                       final tiposById = {for (final t in tipos) t.id: t};
-                      final totalUnidades =
-                          ventas.fold<int>(0, (s, v) => s + v.cantidad);
+                      final totalUnidades = ventas.fold<int>(
+                        0,
+                        (s, v) => s + v.cantidad,
+                      );
                       final totalVentas = ventas.fold<double>(
                         0,
                         (s, v) => s + v.precioVenta,
@@ -229,7 +339,9 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
                                     tiposById[v.tipoMuebleId]?.nombre ?? '—';
                                 final utilidad = v.precioVenta - v.costoTotal;
                                 return Card(
-                                  margin: const EdgeInsets.symmetric(vertical: 4),
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
                                   child: ListTile(
                                     title: Text(nombre),
                                     subtitle: Text(
@@ -265,9 +377,7 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
                               children: [
                                 Text(
                                   'Total unidades vendidas: $totalUnidades',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
+                                  style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 4),
@@ -292,4 +402,3 @@ class _VentasMueblesScreenState extends State<VentasMueblesScreen> {
     );
   }
 }
-

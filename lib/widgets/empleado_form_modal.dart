@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Tipos de empleado permitidos.
-const List<String> kTiposEmpleado = [
-  'fijo',
-  'tapizador',
-  'cortador',
-  'ensamblador',
-];
+const List<String> kTiposEmpleado = ['cajonero', 'tapicero', 'costurero'];
 
 /// Modal para agregar o editar un empleado (nombre y tipo de empleado).
 class EmpleadoFormModal extends StatefulWidget {
@@ -45,16 +40,19 @@ class _EmpleadoFormModalState extends State<EmpleadoFormModal> {
 
   void _guardar() {
     if (_formKey.currentState!.validate()) {
-      Navigator.of(context).pop(EmpleadoFormResult(
-        nombre: _nombreController.text.trim(),
-        tipoEmpleado: _tipoSeleccionado,
-      ));
+      Navigator.of(context).pop(
+        EmpleadoFormResult(
+          nombre: _nombreController.text.trim(),
+          tipoEmpleado: _tipoSeleccionado,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final titulo = widget.titulo ??
+    final titulo =
+        widget.titulo ??
         (widget.nombreInicial == null ? 'Agregar empleado' : 'Editar empleado');
 
     return AlertDialog(
@@ -101,10 +99,7 @@ class _EmpleadoFormModalState extends State<EmpleadoFormModal> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancelar'),
         ),
-        FilledButton(
-          onPressed: _guardar,
-          child: const Text('Guardar'),
-        ),
+        FilledButton(onPressed: _guardar, child: const Text('Guardar')),
       ],
     );
   }
