@@ -488,6 +488,58 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
+  /// Stream de trabajos en un rango [inicioIncl]..[finExcl) para un empleado.
+  Stream<List<Trabajo>> watchTrabajosPorEmpleadoYRango(
+    int empleadoId,
+    DateTime inicioIncl,
+    DateTime finExcl,
+  ) {
+    return (select(trabajos)..where(
+          (t) =>
+              t.empleadoId.equals(empleadoId) &
+              t.fecha.isBiggerOrEqualValue(inicioIncl) &
+              t.fecha.isSmallerThanValue(finExcl),
+        ))
+        .watch();
+  }
+
+  /// Reemplaza la cantidad registrada para una celda (empleado + presupuesto + fecha).
+  /// Si [cantidad] es 0, elimina los registros existentes de esa celda.
+  Future<void> setCantidadTrabajoPorCelda({
+    required int empleadoId,
+    required int presupuestoId,
+    required DateTime fecha,
+    required int cantidad,
+    required double precioUnitario,
+  }) async {
+    final inicio = DateTime(fecha.year, fecha.month, fecha.day);
+    final fin = inicio.add(const Duration(days: 1));
+
+    await transaction(() async {
+      await (delete(trabajos)..where(
+            (t) =>
+                t.empleadoId.equals(empleadoId) &
+                t.presupuestoId.equals(presupuestoId) &
+                t.fecha.isBiggerOrEqualValue(inicio) &
+                t.fecha.isSmallerThanValue(fin),
+          ))
+          .go();
+
+      if (cantidad > 0) {
+        await into(trabajos).insert(
+          TrabajosCompanion.insert(
+            empleadoId: empleadoId,
+            presupuestoId: presupuestoId,
+            cantidad: cantidad,
+            fecha: inicio,
+            precioUnitario: precioUnitario,
+            precioTotal: precioUnitario * cantidad,
+          ),
+        );
+      }
+    });
+  }
+
   /// Presupuesto por tipo de mueble y nombre de línea (ej. "tapizero").
   /// Coincide por nombre ignorando mayúsculas.
   Future<Presupuesto?> getPresupuestoPorTipoYNombreLinea(

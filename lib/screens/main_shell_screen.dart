@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'empleados_screen.dart';
+import 'empleados_monthly_screen.dart';
 import 'home_screen.dart';
 import 'tipos_muebles_screen.dart';
 import 'ventas_muebles_screen.dart';
@@ -32,7 +32,7 @@ class MainShellScreen extends StatelessWidget {
             HomeScreen(showAppBar: false),
             TiposMueblesScreen(showAppBar: false),
             VentasMueblesScreen(showAppBar: false),
-            EmpleadosScreen(showAppBar: false),
+            EmpleadosMonthlyScreen(showAppBar: false),
           ],
         ),
       ),
