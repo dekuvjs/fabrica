@@ -685,10 +685,7 @@ class _TrabajosPanel extends StatelessWidget {
     AppDatabase db,
     List<Trabajo> trabajos,
   ) async {
-    final presupuestoIds = trabajos
-        .map((t) => t.presupuestoId)
-        .toSet()
-        .toList();
+    final presupuestoIds = trabajos.map((t) => t.presupuestoId).toSet().toList();
     final Map<int, String> result = {};
     final tipos = await db.allTiposMueble;
     for (final id in presupuestoIds) {

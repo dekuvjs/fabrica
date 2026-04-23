@@ -1,9 +1,7 @@
-import 'dart:io';
-
 import 'package:excel/excel.dart';
-import 'package:path/path.dart' as p;
 
 import '../database/app_database.dart';
+import 'file_exporter.dart';
 
 /// Módulo para generar reportes en Excel (.xlsx).
 /// Usa el paquete [excel] y puede exportar datos desde Drift.
@@ -50,15 +48,7 @@ class ExcelReportService {
     final bytes = excel.encode();
     if (bytes == null) throw Exception('No se pudo generar el Excel');
 
-    final exportsDir = Directory(p.join(Directory.current.path, 'exports'));
-    if (!exportsDir.existsSync()) {
-      exportsDir.createSync(recursive: true);
-    }
-    final path = p.join(exportsDir.path, '$nombreArchivo.xlsx');
-    final file = File(path);
-    await file.writeAsBytes(bytes);
-
-    return path;
+    return saveExcelFile(bytes: bytes, fileName: '$nombreArchivo.xlsx');
   }
 
   /// Genera un Excel vacío con una hoja de ejemplo (útil como plantilla).
@@ -79,14 +69,6 @@ class ExcelReportService {
     final bytes = excel.encode();
     if (bytes == null) throw Exception('No se pudo generar el Excel');
 
-    final exportsDir = Directory(p.join(Directory.current.path, 'exports'));
-    if (!exportsDir.existsSync()) {
-      exportsDir.createSync(recursive: true);
-    }
-    final path = p.join(exportsDir.path, '$nombreArchivo.xlsx');
-    final file = File(path);
-    await file.writeAsBytes(bytes);
-
-    return path;
+    return saveExcelFile(bytes: bytes, fileName: '$nombreArchivo.xlsx');
   }
 }

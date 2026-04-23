@@ -1,9 +1,7 @@
-import 'dart:io';
-
 import 'package:excel/excel.dart';
-import 'package:path/path.dart' as p;
 
 import '../database/app_database.dart';
+import 'file_exporter.dart';
 
 class TrabajosExcelReportService {
   Future<String> exportarTrabajos({
@@ -64,15 +62,7 @@ class TrabajosExcelReportService {
     final bytes = excel.encode();
     if (bytes == null) throw Exception('No se pudo generar el Excel');
 
-    // Nota: al ejecutar con `flutter run`, `Directory.current` suele ser la raíz del proyecto.
-    // En release, el "current directory" depende de cómo se lance el ejecutable.
-    final exportsDir = Directory(p.join(Directory.current.path, 'exports'));
-    if (!exportsDir.existsSync()) {
-      exportsDir.createSync(recursive: true);
-    }
-    final path = p.join(exportsDir.path, '$nombreArchivo.xlsx');
-    await File(path).writeAsBytes(bytes);
-    return path;
+    return saveExcelFile(bytes: bytes, fileName: '$nombreArchivo.xlsx');
   }
 
   String _fmtDate(DateTime d) {

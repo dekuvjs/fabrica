@@ -556,10 +556,6 @@ class AppDatabase {
 
   static DateTime _startOfDay(DateTime d) => DateTime(d.year, d.month, d.day);
 
-  static bool _isInRange(DateTime value, DateTime start, DateTime endExclusive) {
-    return !value.isBefore(start) && value.isBefore(endExclusive);
-  }
-
   DateTime _asDate(dynamic value) {
     if (value is Timestamp) return value.toDate();
     if (value is String) return DateTime.parse(value);
@@ -898,7 +894,7 @@ class AppDatabase {
         .map((snap) {
       final items = snap.docs
           .map(_trabajoFromDoc)
-          .where((t) => _isInRange(t.fecha, inicio, fin))
+          .where((t) => !t.fecha.isBefore(inicio) && t.fecha.isBefore(fin))
           .toList();
       items.sort((a, b) => a.id.compareTo(b.id));
       return items;
@@ -911,7 +907,7 @@ class AppDatabase {
     final snap = await _col('trabajos').where('empleadoId', isEqualTo: empleadoId).get();
     final items = snap.docs
         .map(_trabajoFromDoc)
-        .where((t) => _isInRange(t.fecha, inicio, fin))
+        .where((t) => !t.fecha.isBefore(inicio) && t.fecha.isBefore(fin))
         .toList();
     items.sort((a, b) => a.id.compareTo(b.id));
     return items;
@@ -954,7 +950,7 @@ class AppDatabase {
     final snap = await _col('trabajos').get();
     final items = snap.docs
         .map(_trabajoFromDoc)
-        .where((t) => _isInRange(t.fecha, inicioIncl, finExcl))
+        .where((t) => !t.fecha.isBefore(inicioIncl) && t.fecha.isBefore(finExcl))
         .toList();
     items.sort((a, b) => a.id.compareTo(b.id));
     return items;
@@ -968,7 +964,7 @@ class AppDatabase {
     final snap = await _col('trabajos').where('empleadoId', isEqualTo: empleadoId).get();
     final items = snap.docs
         .map(_trabajoFromDoc)
-        .where((t) => _isInRange(t.fecha, inicioIncl, finExcl))
+        .where((t) => !t.fecha.isBefore(inicioIncl) && t.fecha.isBefore(finExcl))
         .toList();
     items.sort((a, b) => a.id.compareTo(b.id));
     return items;
@@ -993,7 +989,7 @@ class AppDatabase {
     return _col('ventasMuebles').snapshots().map((snap) {
       final items = snap.docs
           .map(_ventaFromDoc)
-          .where((v) => _isInRange(v.fecha, inicio, fin))
+          .where((v) => !v.fecha.isBefore(inicio) && v.fecha.isBefore(fin))
           .toList();
       items.sort((a, b) => a.id.compareTo(b.id));
       return items;
@@ -1006,7 +1002,7 @@ class AppDatabase {
     final snap = await _col('ventasMuebles').get();
     final items = snap.docs
         .map(_ventaFromDoc)
-        .where((v) => _isInRange(v.fecha, inicio, fin))
+        .where((v) => !v.fecha.isBefore(inicio) && v.fecha.isBefore(fin))
         .toList();
     items.sort((a, b) => a.id.compareTo(b.id));
     return items;
@@ -1019,7 +1015,7 @@ class AppDatabase {
     final snap = await _col('ventasMuebles').get();
     final items = snap.docs
         .map(_ventaFromDoc)
-        .where((v) => _isInRange(v.fecha, inicioIncl, finExcl))
+        .where((v) => !v.fecha.isBefore(inicioIncl) && v.fecha.isBefore(finExcl))
         .toList();
     items.sort((a, b) => a.id.compareTo(b.id));
     return items;

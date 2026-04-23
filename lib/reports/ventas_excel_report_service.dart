@@ -1,9 +1,7 @@
-import 'dart:io';
-
 import 'package:excel/excel.dart';
-import 'package:path/path.dart' as p;
 
 import '../database/app_database.dart';
+import 'file_exporter.dart';
 
 class VentasExcelReportService {
   Future<String> exportarVentas({
@@ -60,13 +58,7 @@ class VentasExcelReportService {
     final bytes = excel.encode();
     if (bytes == null) throw Exception('No se pudo generar el Excel');
 
-    final exportsDir = Directory(p.join(Directory.current.path, 'exports'));
-    if (!exportsDir.existsSync()) {
-      exportsDir.createSync(recursive: true);
-    }
-    final path = p.join(exportsDir.path, '$nombreArchivo.xlsx');
-    await File(path).writeAsBytes(bytes);
-    return path;
+    return saveExcelFile(bytes: bytes, fileName: '$nombreArchivo.xlsx');
   }
 
   String _fmtDate(DateTime d) {
