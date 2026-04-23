@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'empleados_screen.dart';
@@ -9,6 +10,17 @@ import 'ventas_muebles_screen.dart';
 class MainShellScreen extends StatelessWidget {
   const MainShellScreen({super.key});
 
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+    } on FirebaseAuthException catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.message ?? 'No se pudo cerrar sesion.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -18,6 +30,13 @@ class MainShellScreen extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Fábrica de Muebles'),
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          actions: [
+            IconButton(
+              onPressed: () => _signOut(context),
+              tooltip: 'Cerrar sesion',
+              icon: const Icon(Icons.logout),
+            ),
+          ],
           bottom: TabBar(
             tabs: const [
               Tab(icon: Icon(Icons.home_outlined), text: 'Inicio'),
