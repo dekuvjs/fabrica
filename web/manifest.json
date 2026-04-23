@@ -1,11 +1,11 @@
 {
-    "name": "fabrica_muebles",
-    "short_name": "fabrica_muebles",
+    "name": "Fabrica de Muebles",
+    "short_name": "Fabrica",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Sistema de gestion para fabrica de muebles.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

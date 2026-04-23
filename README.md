@@ -1,10 +1,11 @@
 # Fábrica de Muebles
 
-Aplicación de escritorio en Flutter con base de datos SQLite (Drift) y generación de reportes en Excel.
+Aplicación Flutter multiplataforma (desktop y web) con base de datos SQLite (Drift) y generación de reportes en Excel.
 
 ## Requisitos
 
 - Flutter SDK (con soporte desktop)
+- Flutter SDK con soporte web habilitado
 - Para **macOS**: Xcode
 - Para **Windows**: Visual Studio con "Desktop development with C++"
 - Para **Linux**: `clang`, `cmake`, `ninja-build`, `pkg-config`, `libgtk-3-dev`, `libstdc++-12-dev`
@@ -30,6 +31,26 @@ flutter run -d windows
 
 # Linux
 flutter run -d linux
+```
+
+## Ejecutar en web
+
+```bash
+# Ver dispositivos web disponibles (ej. chrome)
+flutter devices
+
+# Ejecutar en navegador
+flutter run -d chrome
+```
+
+## Build para producción (web)
+
+```bash
+# Generar salida web estática
+flutter build web
+
+# Los archivos quedan en:
+build/web
 ```
 
 ## Estructura del proyecto
